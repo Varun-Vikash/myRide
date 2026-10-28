@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <title>myRide@BIT — About & Campus Legends</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/images/logo.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+
+  <!-- Fonts & Semantic UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Yeon+Sung&family=Nunito+Sans:wght@300;400;500;600;700&family=Inter:wght@400;600;700&family=Quicksand:wght@400;500;600;700&family=Overlock&family=Special+Elite&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+  <link rel="stylesheet" href="/assets/stylesheets/application.css">
+
+  <style>
+    body {
+      background: #14151b;
+      color: #f8fafc;
+      font-family: 'Nunito Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .title-bar {
+      width: 100vw;
+      display: flex;
+      padding: 3.5vh 5vw;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: rgba(20, 21, 27, 0.85);
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid #363842;
+      z-index: 100;
+    }
+    .title {
+      font-family: 'Yeon Sung', cursive;
+      color: mediumslateblue;
+      font-size: 3rem;
+    }
+    .visit-btn {
+      color: mediumslateblue;
+      border: 1.5px solid mediumslateblue;
+      background: transparent;
+      border-radius: 40px;
+      padding: 4px 24px;
+      font-size: 1.6rem;
+      font-family: 'Overlock', cursive;
+      cursor: pointer;
+      transition: all 300ms ease;
+    }
+    .visit-btn:hover, .visit-btn:active {
+      background: mediumslateblue;
+      color: #14151b;
+      box-shadow: 0 0 15px rgba(123, 104, 238, 0.6);
+    }
+    .visit-btn.bigger {
+      font-size: 1.8rem;
+      padding: 8px 30px;
+      color: mediumslateblue;
+      border-color: mediumslateblue;
+      margin-top: 40px;
+    }
+    .visit-btn.bigger:hover, .visit-btn.bigger:active {
+      background: mediumslateblue;
+      color: #14151b;
+    }
+    #about {
+      min-height: 80vh;
+      width: 100vw;
+      background: radial-gradient(#000000BB, #000000EE, #000000);
+      padding: 16vh 22vw 10vh;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    .para {
+      font-size: 1.9rem;
+      color: mediumslateblue;
+      margin-top: 24px;
+      line-height: 1.65;
+      text-align: center;
+      font-family: 'Overlock', cursive;
+      font-weight: 500;
+    }
+    .map-logo {
+      width: 220px;
+      height: 220px;
+    }
+    #legends {
+      background: #14151b;
+      padding: 70px 10vw;
+    }
+    #legends h1 {
+      color: mediumslateblue;
+      margin-bottom: 45px;
+      font-size: 2.6rem;
+      font-family: 'Nunito Sans', sans-serif;
+      text-align: center;
+    }
+    .legends-list {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: center;
+    }
+    .legend-box {
+      display: flex;
+      align-items: center;
+      margin: 16px;
+      width: 320px;
+      background: #1e1f26;
+      border: 1px solid #363842;
+      border-radius: 8px;
+      padding: 14px 18px;
+      box-shadow: 0 0 10px #474A56;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .legend-box:hover {
+      transform: translateY(-3px);
+      border-color: mediumslateblue;
+    }
+    .explained-legend {
+      height: 44px;
+      width: 44px;
+      display: inline;
+    }
+    .legend-name {
+      display: inline;
+      margin-left: 18px;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 600;
+      font-size: 1.4rem;
+      color: #f1f5f9;
+    }
+    footer {
+      background: mediumslateblue;
+      padding: 60px 10vw 35px;
+      text-align: center;
+      font-size: 1.4rem;
+      color: #1e1f26;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 600;
+    }
+    .contact-info {
+      display: flex;
+      margin: 40px 0 20px;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+    .contact-name {
+      display: inline;
+      margin-left: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.2rem;
+    }
+    hr {
+      margin: 60px 0 25px;
+      border-color: rgba(0, 0, 0, 0.25);
+    }
+    .copyright {
+      font-family: 'Special Elite', cursive;
+      font-size: 1rem;
+      margin: 10px;
+      color: #2E2F30;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="title-bar">
+    <div class="title">myRide@BIT</div>
+    <a href="/"><button class="visit-btn">Visit Map</button></a>
+  </header>
+
+  <section id="about">
+    <img src="/assets/images/logo.svg" class="map-logo" alt="myRide@BIT Logo">
+    <div class="para">
+      myRide@BIT is an online interactive transit and navigation platform covering all places, blocks, and stops in Bannari Amman Institute of Technology (BIT Sathy). Featuring high-precision 2D campus navigation, real-time 60 FPS electric shuttle bus tracking, and Dijkstra-based shortest routing.
+    </div>
+    <br><br>
+    <a href="/"><button class="visit-btn bigger">Explore the Campus!</button></a>
+  </section>
+
+  <section id="legends">
+    <h1>Campus Legends</h1>
+    <div class="legends-list">
+      <div class="legend-box">
+        <img src="/assets/images/atm.svg" class="explained-legend" alt="ATM">
+        <div class="legend-name">ATM</div>
+      </div>
+      <div class="legend-box">
+        <img src="/assets/images/cricket.svg" class="explained-legend" alt="Cricket">
+        <div class="legend-name">Cricket Ground</div>
+      </div>
+      <div class="legend-box">
+        <img src="/assets/images/football.svg" class="explained-legend" alt="Football">
+        <div class="legend-name">Football Ground</div>
+      </div>
+      <div class="legend-box">
+        <img src="/assets/images/gym.svg" class="explained-legend" alt="Gym">
+        <div class="legend-name">Gym</div>
+      </div>
+      <div class="legend-box">
+        <img src="/assets/images/hostel.svg" class="explained-legend" alt="Hostel">
+        <div class="legend-name">Hostel</div>
+      </div>
+      <div class="legend-box">
+        <img src="/assets/images/juice.svg" class="explained-legend" alt="Juice Bar">
+        <div class="legend-name">Juice Bar</div>
+      </div>
+      <div class="legend-box">
+        <img src="/assets/images/laundry.svg" class="explained-legend" alt="Laundry">
+        <div class="legend-name">Laundry</div>
+      </div>
+      <div class="legend-box">
+        <img src="/assets/images/library.svg" class="explained-legend" alt="Library">
+        <div class="legend-name">Library</div>
+      </div>
+      <div class="legend-box">
+        <img src="/assets/images/meat-and-eat.svg" class="explained-legend" alt="Meat and Eat">
+        <div class="legend-name">Meat &amp; Eat</div>
+      </div>
+      <div class="legend-box">
+        <img src="/assets/images/food.svg" class="explained-legend" alt="Mess and Cafeteria">
+        <div class="legend-name">Mess &amp; Cafeteria</div>
+      </div>
+      <div class="legend-box">
+        <img src="/assets/images/parking.svg" class="explained-legend" alt="Parking">
+        <div class="legend-name">Parking Area</div>
+      </div>
+      <div class="legend-box">
+        <img src="/assets/images/chess.svg" class="explained-legend" alt="PET Room">
+        <div class="legend-name">PET Room</div>
+      </div>
+      <div class="legend-box">
+        <img src="/assets/images/office.svg" class="explained-legend" alt="Office">
+        <div class="legend-name">Principal Office</div>
+      </div>
+      <div class="legend-box">
+        <img src="/assets/images/xerox.svg" class="explained-legend" alt="Xerox">
+        <div class="legend-name">Reprography Centre</div>
+      </div>
+      <div class="legend-box">
+        <img src="/assets/images/snacks.svg" class="explained-legend" alt="Snacks">
+        <div class="legend-name">Snacks Canteen</div>
+      </div>
+      <div class="legend-box">
+        <img src="/assets/images/wifi.svg" class="explained-legend" alt="Wifi">
+        <div class="legend-name">Wifi Area</div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="footer">
+    <div class="contact">
+      <div class="info">
+        myRide@BIT — Campus Navigation &amp; Transit System (S7 Project Work II)
+      </div>
+    </div>
+    <hr style="border-color:rgba(255,255,255,0.1);"/>
+    <div class="copyright">Bannari Amman Institute of Technology (BIT Sathy)</div>
+  </footer>
+
+</body>
+</html>

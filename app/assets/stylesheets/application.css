@@ -1,0 +1,737 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+
+body{
+    width: 100vw;
+    position: relative;
+}
+
+.bg-map{
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: scroll;
+    margin: auto;
+}
+
+.bg-map::-webkit-scrollbar{
+    display: none;
+}
+
+.bg-map img{
+    position: absolute;
+}
+
+.main{
+    position: absolute;
+    top: 0;
+    text-align: center;
+    padding-top: 100px;
+}
+
+.search-bar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 80px;
+    width: 100vw;
+    margin: 0;
+    z-index: 200;
+    text-align: center;
+    padding: 20px;
+}
+
+#search-bar{
+    border: 1px solid black;
+    font-size: 1.2rem;
+}
+
+#search-bar:focus{
+    border: 2px solid mediumslateblue;
+}
+
+.search-wrapper{
+    width: 70%;
+    margin: auto;
+    background-color: white;
+    box-shadow: 0 6px 20px;
+    border-radius: 5px;
+}
+
+.search-icon{
+    z-index: 202;
+}
+
+.suggestions{
+    text-align: center;
+}
+
+.suggestion-list{
+    margin: 0 auto;
+    padding: 10px 0;
+    text-align: left;
+    list-style-type: none;
+    position: relative;
+    z-index: 106;
+    display: none;
+    max-height: 70vh;
+    overflow-y: scroll;
+}
+
+.suggestion-list li{
+    padding: 1% 5%;
+    margin: 0;
+}
+
+.suggestion-list li:hover{
+    background-color: #EEEEEE;
+}
+
+.building-place{
+    color: grey;
+    font-size: 0.8rem;
+}
+
+.box-input{
+    width: 100%;
+}
+
+.tag{
+    position: absolute;
+    font-weight: 400;
+    font-size: 1rem;
+    text-align: center;
+    color: white;
+    text-shadow: 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black;
+    font-family: 'Inter', sans-serif;
+    width: 60px;
+    text-wrap: normal;
+    z-index: 103;
+}
+
+#main-parking{
+    top: 1050px;
+    left: 1950px;
+}
+
+#map-icon{
+    background-color: lightgreen;
+}
+
+.visible{
+    display: block;
+}
+
+.invisible{
+    display: none;
+}
+
+.place-details{
+    background: white;
+    border: 1px solid black;
+    border-radius: 15px 15px 0 0;
+    position: fixed;
+    width: 70vw;
+    height: 0; /*300px;*/
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 40px 30px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+    visibility: hidden;
+    transition: height 1s, visibility 1s;
+    z-index: 105;
+}
+
+.place-title{
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 1.65rem;
+    font-weight: 500;
+    margin-bottom: 7px;
+}
+
+.place-main{
+    font-weight: 400;
+    font-size: 1rem;
+    color: #999999;
+}
+
+.floors{
+    white-space: nowrap;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    position: relative;
+    margin-top: 15px;
+    padding: 10px 0;
+    background: -webkit-linear-gradient(-90deg, #cccccc77, #ffffff, #ffffff, #ffffff);
+    border-bottom: 0.5px solid #EEEEEE;
+}
+
+.floors::-webkit-scrollbar{
+    display: none;
+}
+
+.floor{
+    display: inline-block;
+    margin: 0 5px;
+    width: 90px;
+    text-align: center;
+}
+
+.floor.active{
+    color: mediumslateblue;
+}
+
+.underline{
+    position: absolute;
+    height: 2px;
+    width: 100px;
+    bottom: 0;
+    left: 0;
+    background: mediumslateblue;
+    border-radius: 20%;
+    transform: translateX(0px);
+    transition: transform 500ms ease-in-out;
+}
+
+.classes{
+    margin-top: 20px;
+    padding: 0 25px;
+    font-size: 1rem;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 300;
+    list-style: none;
+    height: 50%;
+    overflow-y: scroll;
+    display: none;
+}
+
+.classes::-webkit-scrollbar-track{
+    display: none;
+}
+
+.classes.visible{
+    display: block;
+}
+
+.classes li::before {
+    content: "\2022";
+    color: mediumslateblue;
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+}
+
+.get-down-btn{
+    position: absolute;
+    background: -webkit-linear-gradient(135deg, #ffffff, #cccccc88);
+    border: 1px solid grey;
+    border-radius: 50%;
+    bottom: 0; /* 325px*/
+    left: 50%;
+    width: 48px;
+    height: 48px;
+    transform: translateX(-50%);
+    visibility: hidden;
+    transition: bottom 1s, visibility 1s;
+    z-index: 105;
+}
+
+.down-arrow{
+    height: 24px;
+    width: 24px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 105;
+}
+
+.legend{
+    height: 32px;
+    width: 32px;
+    position: absolute;
+}
+
+#pin{
+    position: absolute;
+    z-index: 103;
+    width: 32px;
+    height: 32px;
+    display: none;
+}
+
+.zoom-buttons{
+    position: fixed;
+    right: 30px;
+    bottom: 40px;
+    z-index: 104;
+    transition: bottom 1s;
+}
+
+.layer-button{
+    position: fixed;
+    left: 30px;
+    bottom: 40px;
+    z-index: 104;
+    transition: bottom 1s;
+}
+
+.icon-button{
+    width: 44px;
+    height: 44px;
+    background: mediumslateblue;
+    border: 1px solid black;
+    border-radius: 7px;
+    box-shadow: 0 0 10px #474A56;
+}
+
+.icon-button:hover, .icon-button:active{
+    background: #6a60dd;
+}
+
+.url-box{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 103;
+    display: none;
+}
+
+.url-container{
+    display: flex;
+    padding-right: -1px;
+}
+
+.pin-url{
+    border-top: 2px solid mediumslateblue;
+    border-left: 2px solid mediumslateblue;
+    border-bottom: 2px solid mediumslateblue;
+    border-right: none;
+    background: #C4C1E0;
+    padding: 3px 0 3px 6px;
+    color: mediumslateblue;
+    border-radius: 4px 0 0 4px;
+    font-family: 'Inter', sans-serif;
+}
+
+.pin-url:focus{
+    outline: none;
+}
+
+.copy-btn{
+    background: mediumslateblue;
+    border-top: 2px solid mediumslateblue;
+    border-right: 2px solid mediumslateblue;
+    border-bottom: 2px solid mediumslateblue;
+    border-left: none;
+    padding: 3px 6px;
+    border-radius: 0 4px 4px 0;
+    width: 60px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+    color: #2E2F30;
+    font-size: 0.9rem;
+}
+
+.copy-btn:hover, .copy-btn:active{
+    background: #6a60dd;
+}
+
+
+/*About Page CSS Styles*/
+
+.title-bar{
+    width: 100vw;
+    display: flex;
+    padding: 3.5vh 5vw;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: radial-gradient(#f6f6f666, #f6f6f655, #f6f6f633);
+    backdrop-filter: saturate(180%) blur(10px);
+    -webkit-backdrop-filter: saturate(180%) blur(10px);
+}
+
+.title{
+    font-family: 'Yeon Sung', cursive;
+    color: mediumslateblue;
+    font-size: 3rem;
+}
+
+.visit-btn{
+    color: black;
+    border: 1px solid black;
+    background: transparent;
+    border-radius: 40px;
+    padding: 4px 20px;
+    font-size: 1.7rem;
+    font-family: 'Overlock', cursive;
+    transition: background-color 300ms;
+}
+
+.visit-btn:hover, .visit-btn:active{
+    background: mediumslateblue;
+}
+
+.visit-btn.bigger{
+    font-size: 1.8rem;
+    padding: 8px 27px;
+    color: mediumslateblue;
+    border-color: mediumslateblue;
+    margin-top: 50px;
+}
+
+.visit-btn.bigger:hover, .visit-btn.bigger.active{
+    color: black;
+}
+
+section{
+    padding: 70px 10vw;
+}
+
+#about{
+    min-height: 80vh;
+    width: 100vw;
+    background: radial-gradient(#000000BB, #000000EE , #000000);
+    padding: 15vh 25vw 10vh;
+    text-align: center;
+}
+
+.para{
+    font-size: 2rem;
+    color: mediumslateblue;
+    margin-top: 10px;
+    line-height: 1.6;
+    text-align: center;
+    font-family: 'Overlock', cursive;
+    font-weight: 500;
+}
+
+.map-logo{
+    width: 250px;
+    height: 250px;
+}
+
+#legends{
+    background: #f6f6f6;
+}
+
+#legends h1{
+    color: #474A56;
+    margin-bottom: 50px;
+    font-size: 2.6rem;
+}
+
+.legends-list{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
+.legend-box{
+    display: flex;
+    align-items: center;
+    margin: 20px;
+    width: 300px;
+}
+
+.explained-legend{
+    height: 48px;
+    width: 48px;
+    display: inline;
+}
+
+.legend-name{
+    display: inline;
+    margin-left: 20px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+    font-size: 1.6rem;
+}
+
+#contributors{
+    background: radial-gradient(farthest-corner at 200px 100px, #b4b4b4,#ffffff);
+}
+
+#contributors h1{
+    font-size: 2.5rem;
+    color: mediumslateblue;
+    margin-bottom: 50px;
+}
+
+#contributors ul{
+    list-style: none;
+}
+
+#contributors li{
+    font-size: 1.2rem;
+}
+
+#contributors ul li:before{
+    content: "\2022";
+    color: mediumslateblue;
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+}
+
+#contributors h2{
+    font-weight: 500;
+}
+
+.credits-body{
+    padding-left: 40px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.name-list{
+    margin-right: 50px;
+}
+
+.name-list ul li{
+    font-family: 'Quicksand', sans-serif;
+}
+
+footer{
+    background: mediumslateblue;
+    padding: 70px 10vw 40px;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.contact-info{
+    display: flex;
+    margin: 50px 0 20px;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.contact-name{
+    display: inline;
+    margin-left: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.3rem;
+}
+
+hr{
+    margin: 80px 0 30px;
+    border-color: black;
+}
+
+.copyright{
+    font-family: 'Special Elite', cursive;
+    font-size: 1rem;
+    margin: 10px;
+}
+
+.info{
+    font-family: 'Quicksand', sans-serif;
+}
+
+/*Instruction box*/
+
+.instruct-box{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    z-index: 200;
+    width: 40%;
+    opacity: 1;
+    transition: opacity 10s;
+    visibility: visible;
+}
+
+.instruction{
+    border: 1px solid mediumslateblue;
+    border-radius: 5px;
+    background: #F5F7FA;
+    color: #929AAB;
+    position: relative;
+    padding: 8% 5% 3% 5%;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 500;
+    box-shadow: 0 0 10px #474A56;
+    font-size: 1.2rem;
+}
+
+.close-btn{
+    position: absolute;
+    top: 7%;
+    right: 4%;
+    color: #f5f7fa;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 900;
+    background: mediumslateblue;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.close-btn:hover, .close-btn:focus, .close-btn:active{
+    color: #f5f7fa;
+    background: #6a60dd;
+}
+
+.notes hr{
+    margin: 5px 0 20px;
+    height: 1px;
+    border: none;
+    background: mediumslateblue;
+}
+
+.last-info{
+    color: mediumslateblue;
+}
+
+@media screen and (max-width: 540px){
+    .search-wrapper{
+        width: 95%;
+    }
+
+    .box-input{
+        width: 100%;
+    }
+
+    .icon-button{
+        height: 40px;
+        width: 40px;
+    }
+
+    .place-details{
+        width: 100vw;
+    }
+
+    .title-bar{
+        padding: 20px 8vw;
+    }
+
+    .title{
+        font-size: 2rem;
+    }
+
+    .visit-btn{
+        font-size: 1.4rem;
+        padding: 5px 15px;
+    }
+
+    .map-logo{
+        height: 45vw;
+        width: 45vw;
+    }
+
+    .para{
+        font-size: 1.3rem;
+        text-align: justify;
+    }
+
+    section{
+        padding: 40px 10vw;
+    }
+
+    #about{
+        padding: 100px 10vw;
+    }
+
+    .visit-btn.bigger{
+        font-size: 1.5rem;
+    }
+
+    #legends h1{
+        font-size: 1.6rem;
+        margin-bottom: 20px;
+    }
+
+    .legends-list{
+        justify-content: left;
+    }
+
+    .explained-legend{
+        height: 32px;
+        width: 32px;
+    }
+
+    .legend-name{
+        font-size: 1.3rem;
+    }
+
+    #contributors h1{
+        font-size: 1.6rem;
+        margin-bottom: 20px;
+    }
+
+    #contributors h2{
+        font-size: 1.3rem;
+    }
+
+    #contributors li{
+        font-size: 1.2rem;
+    }
+
+    #footer{
+        padding: 30px 10vw 20px;
+        font-size: 1.1rem;
+        text-align: justify;
+    }
+
+    .contact-info{
+        margin: 20px 50px 30px;
+        justify-content: flex-start;
+    }
+
+    .contact-name{
+        font-size: 1rem;
+    }
+
+    hr{
+        margin: 30px 0 20px;
+    }
+
+    .copyright{
+        text-align: center;
+        font-size: 0.7rem;
+    }
+
+    .credits-body{
+        padding-left: 10px;
+    }
+
+    .instruct-box{
+        width: 80%;
+    }
+
+    .instruction{
+        padding: 12% 6% 3%;
+        font-size: 1rem;
+    }
+
+    .close-btn{
+        top: 15px;
+        right: 20px;
+    }
+}

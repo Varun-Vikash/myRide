@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <title>myRide@BIT — Campus Navigation & Shuttle Bus Tracking</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/images/logo.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+  <meta name="description" content="myRide@BIT is an online campus navigation and real-time electric shuttle bus tracking and dynamic dispatch system for Bannari Amman Institute of Technology.">
+
+  <!-- myRide@BIT Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Yeon+Sung&family=Nunito+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&family=Overlock&family=Special+Elite&display=swap" rel="stylesheet">
+  
+  <!-- Semantic UI -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+  
+  <!-- myRide@BIT Core Stylesheet -->
+  <link rel="stylesheet" href="/assets/stylesheets/application.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+
+  <style>
+    /* ============================================================
+       PRIMARY DARK MODE THEME SYSTEM
+       ============================================================ */
+    :root, [data-theme="dark"] {
+      --bg-viewport: #14151b;
+      --bg-card: rgba(30, 31, 38, 0.96);
+      --bg-card-hover: rgba(42, 44, 54, 0.96);
+      --bg-card-sub: rgba(36, 38, 48, 0.9);
+      --bg-input: #181920;
+      --border-color: #363842;
+      --border-focus: mediumslateblue;
+      --text-main: #f8fafc;
+      --text-muted: #929aab;
+      --text-dim: #64748b;
+      --btn-purple: mediumslateblue;
+      --btn-purple-hover: #6a60dd;
+      --btn-border: #000000;
+      --btn-shadow: 0 0 10px #474A56;
+      --map-filter: none;
+      --map-sat-filter: brightness(0.85) contrast(1.1);
+      --tag-color: #ffffff;
+      --tag-shadow: 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black;
+      --tag-hover: #ffeaa7;
+      --drawer-bg: #1e1f26;
+      --drawer-border: #363842;
+      --widget-bg: rgba(30, 31, 38, 0.96);
+      --header-grad: linear-gradient(135deg, mediumslateblue, #5548c8);
+      --shadow-main: 0 0 12px #474A56, 0 6px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    [data-theme="light"] {
+      --bg-viewport: #f1f3f4;
+      --bg-card: rgba(255, 255, 255, 0.96);
+      --bg-card-hover: #f8f9fa;
+      --bg-card-sub: #f8f9fa;
+      --bg-input: #ffffff;
+      --border-color: rgba(0, 0, 0, 0.1);
+      --border-focus: mediumslateblue;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      --btn-purple: mediumslateblue;
+      --btn-purple-hover: #6a60dd;
+      --btn-border: black;
+      --btn-shadow: 0 0 10px #474A56;
+      --map-filter: none;
+      --map-sat-filter: none;
+      --tag-color: #ffffff;
+      --tag-shadow: 0 0 2px black, 0 0 2px black, 0 0 2px black;
+      --tag-hover: #ffeaa7;
+      --drawer-bg: #ffffff;
+      --drawer-border: #1e293b;
+      --widget-bg: rgba(255, 255, 255, 0.96);
+      --header-grad: linear-gradient(135deg, mediumslateblue, #5843eb);
+      --shadow-main: 0 8px 25px rgba(0, 0, 0, 0.22);
+    }
+
+    * { box-sizing: border-box; }
+    
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Nunito Sans', sans-serif;
+      background: var(--bg-viewport);
+      color: var(--text-main);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* Scrollable Map Viewport Container */
+    .bg-map {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: scroll;
+      margin: 0;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: pan-x pan-y;
+      background-color: var(--bg-viewport);
+      display: flex;
+      transition: background-color 0.3s ease;
+    }
+    .bg-map.grabbing {
+      cursor: grabbing !important;
+    }
+    .bg-map::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Map Stage */
+    .map-stage {
+      position: relative;
+      width: 3420px;
+      height: 3876px;
+      margin: auto;
+      flex-shrink: 0;
+    }
+
+    /* Prevent browser native image ghost-drag & Apply Dark Map Filter */
+    .bg-map img.the-map {
+      position: absolute;
+      top: 0;
+      left: 0;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
+      transition: filter 0.35s ease;
+    }
+    .bg-map img.the-map[src*="Map.svg"] {
+      filter: var(--map-filter);
+    }
+    .bg-map img.the-map[src*="Map.webp"] {
+      filter: var(--map-sat-filter);
+    }
+
+    /* Map Tags */
+    .tag {
+      position: absolute;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-align: center;
+      color: var(--tag-color);
+      text-shadow: var(--tag-shadow);
+      font-family: 'Inter', sans-serif;
+      width: 90px;
+      transform: translateX(-50%);
+      z-index: 103;
+      cursor: pointer;
+      transition: transform 0.15s, color 0.15s;
+    }
+    .tag:hover {
+      transform: translateX(-50%) scale(1.15);
+      color: var(--tag-hover);
+    }
+
+    /* High-Tech Action Buttons */
+    .icon-button {
+      width: 44px;
+      height: 44px;
+      background: var(--btn-purple);
+      border: 1px solid var(--btn-border);
+      border-radius: 8px;
+      box-shadow: var(--btn-shadow);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .icon-button:hover, .icon-button:active {
+      background: var(--btn-purple-hover);
+      transform: scale(1.06);
+    }
+    .icon-button img, .icon-button svg {
+      width: 22px;
+      height: 22px;
+      pointer-events: none;
+    }
+
+    /* Zoom Buttons (Right) */
+    .zoom-buttons {
+      position: fixed;
+      right: 30px;
+      bottom: 40px;
+      z-index: 104;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: bottom 0.5s;
+    }
+
+    /* Layer Button (Bottom Left) */
+    .layer-button {
+      position: fixed;
+      left: 30px;
+      bottom: 40px;
+      z-index: 104;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: bottom 0.5s;
+    }
+
+    /* Centered Instruction Box */
+    .instruct-box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 200;
+      width: 42%;
+      max-width: 500px;
+      opacity: 1;
+      transition: opacity 1.2s ease-out;
+    }
+    .instruction {
+      border: 1.5px solid var(--border-focus);
+      border-radius: 8px;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--text-muted);
+      position: relative;
+      padding: 30px 24px 20px 24px;
+      font-family: 'Nunito Sans', sans-serif;
+      font-weight: 500;
+      box-shadow: var(--shadow-main);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+    .instruction p {
+      margin: 0 0 10px 0;
+      color: var(--text-muted);
+    }
+    .instruction p strong {
+      color: var(--text-main);
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      color: #ffffff !important;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 900;
+      background: var(--btn-purple);
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      text-align: center;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .close-btn:hover {
+      background: var(--btn-purple-hover);
+    }
+    .notes hr {
+      margin: 12px 0;
+      height: 1px;
+      border: none;
+      background: var(--border-focus);
+    }
+    .last-info {
+      color: var(--border-focus) !important;
+      font-weight: 600;
+      margin: 0 !important;
+    }
+
+    /* Floating Search Bar */
+    .search-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 80px;
+      width: 100vw;
+      margin: 0;
+      z-index: 200;
+      text-align: center;
+      padding: 18px 20px;
+      pointer-events: none;
+    }
+    .search-wrapper {
+      width: 70%;
+      max-width: 620px;
+      margin: auto;
+      background-color: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-main);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      pointer-events: auto;
+      position: relative;
+    }
+    #search-bar {
+      background: var(--bg-input);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      font-size: 1.05rem;
+      border-radius: 8px;
+      padding: 12px 18px;
+    }
+    #search-bar:focus {
+      border: 2px solid var(--border-focus);
+      outline: none;
+    }
+    .box-input i.search.icon {
+      color: var(--text-muted) !important;
+    }
+    .suggestion-list {
+      margin: 0 auto;
+      padding: 8px 0;
+      text-align: left;
+      list-style-type: none;
+      position: relative;
+      z-index: 206;
+      display: none;
+      max-height: 60vh;
+      overflow-y: auto;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border-radius: 0 0 8px 8px;
+      border-top: 1px solid var(--border-color);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-main);
+    }
+    .suggestion-list li {
+      padding: 10px 20px;
+      margin: 0;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border-color);
+      transition: background 0.15s;
+    }
+    .suggestion-list li:hover {
+      background-color: var(--bg-card-hover);
+    }
+    .match {
+      font-weight: 700;
+      color: var(--text-main);
+      font-size: 0.96rem;
+    }
+    .building-place {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      margin-top: 2px;
+    }
+
+    /* Sliding Place Details Drawer */
+    .place-details {
+      background: var(--drawer-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--drawer-border);
+      border-left: 1px solid var(--drawer-border);
+      border-right: 1px solid var(--drawer-border);
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.7);
+      position: fixed;
+      width: 70vw;
+      height: 0;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 30px 30px;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 500;
+      visibility: hidden;
+      transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
+      z-index: 105;
+      color: var(--text-main);
+    }
+    .place-title {
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .place-main {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+    .floors {
+      white-space: nowrap;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      font-family: 'Nunito Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      position: relative;
+      margin-top: 14px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .floors::-webkit-scrollbar { display: none; }
+    .floor {
+      display: inline-block;
+      margin: 0 8px;
+      padding: 4px 10px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .floor.active {
+      color: var(--border-focus);
+    }
+    .underline {
+      position: absolute;
+      height: 3px;
+      width: 90px;
+      bottom: -1px;
+      left: 0;
+      background: var(--border-focus);
+      box-shadow: 0 0 8px var(--border-focus);
+      border-radius: 2px;
+      transition: transform 0.25s ease-in-out;
+    }
+    .classes {
+      margin-top: 16px;
+      padding: 0 20px;
+      font-size: 0.95rem;
+      font-family: 'Nunito Sans', sans-serif;
+      list-style: none;
+      height: calc(100% - 130px);
+      overflow-y: auto;
+      display: none;
+      line-height: 1.8;
+      color: var(--text-main);
+    }
+    .classes.visible {
+      display: block;
+    }
+    .classes li::before {
+      content: "•";
+      color: var(--border-focus);
+      font-weight: bold;
+      display: inline-block;
+      width: 1em;
+      margin-left: -1em;
+    }
+    .get-down-btn {
+      position: fixed;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
+      bottom: 0;
+      left: 50%;
+      width: 44px;
+      height: 44px;
+      transform: translateX(-50%);
+      visibility: hidden;
+      transition: bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
+      z-index: 106;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-main);
+    }
+    .get-down-btn:hover {
+      background: var(--bg-card-hover);
+    }
+
+    /* Shuttle Bus Tracker Widget */
+    .shuttle-widget {
+      background: var(--widget-bg) !important;
+      border: 1px solid var(--border-color) !important;
+      box-shadow: var(--shadow-main) !important;
+      color: var(--text-main);
+    }
+    .shuttle-widget-header {
+      background: var(--header-grad) !important;
+    }
+    .bus-row-card {
+      background: var(--bg-card-sub) !important;
+      border: 1px solid var(--border-color) !important;
+    }
+    .bus-row-title {
+      color: var(--text-main) !important;
+    }
+    .bus-row-info {
+      color: var(--text-muted) !important;
+    }
+    .bus-row-info strong {
+      color: var(--text-main) !important;
+    }
+    .shuttle-widget-controls {
+      background: var(--bg-card-sub) !important;
+      border: 1px solid var(--border-color);
+      color: var(--text-main) !important;
+    }
+    #sim-speed-select {
+      background: var(--bg-input);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+    .telemetry-mini {
+      color: var(--text-dim) !important;
+    }
+    .telemetry-mini strong {
+      color: var(--text-main) !important;
+    }
+
+    /* Pin URL Box */
+    .url-box {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 105;
+      display: none;
+    }
+    .pin-url {
+      border: 1.5px solid var(--border-focus);
+      background: var(--bg-input);
+      color: var(--text-main);
+      padding: 4px 8px;
+      border-radius: 4px 0 0 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+    }
+    .copy-btn {
+      background: var(--btn-purple);
+      color: #fff;
+      border: 1.5px solid var(--border-focus);
+      border-left: none;
+      padding: 4px 10px;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .copy-btn:hover {
+      background: var(--btn-purple-hover);
+    }
+  </style>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+</head>
+<body>
+
+  <!-- Floating Search Bar -->
+  <div class="search-bar">
+    <div class="search-wrapper">
+      <div class="ui icon input box-input">
+        <input id="search-bar" type="text" placeholder="Search buildings, departments, rooms..." autocomplete="off">
+        <i class="search link icon" id="search-icon-btn"></i>
+      </div>
+      <div class="suggestions">
+        <ul class="suggestion-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Map Canvas Viewport with Centered Stage -->
+  <div class="bg-map" id="map-canvas">
+    <div class="map-stage" id="map-stage">
+      <img src="/assets/images/Map-dark.svg" id="svg-map-img" height="3876" width="3420" class="the-map visible" oncontextmenu="return false;" alt="SVG map">
+      <img src="/assets/images/Map.webp" id="sat-map-img" height="3876" width="3420" class="the-map invisible" oncontextmenu="return false;" alt="Satellite Map">
+      
+      <!-- Route Polyline SVG Overlay -->
+      <svg class="route-svg-overlay" width="3420" height="3876" id="route-svg"></svg>
+
+      <div class="tags"></div>
+      <div class="legends"></div>
+      <div class="shuttle-markers"></div>
+
+      <img src="/assets/images/tag.svg" id="pin" alt="pin-point">
+
+      <div class="url-box" id="url-box">
+        <div class="url-container" style="display:flex;">
+          <input class="pin-url" id="pin-url" value="localhost:3000" readonly />
+          <button class="copy-btn" id="btn-copy-pin">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Centered Instruction Box -->
+  <div class="instruct-box">
+    <div class="instruction">
+      <div class="notes">
+        <p><strong>Click &amp; drag anywhere</strong> on the map to freely move around in all directions.</p>
+        <p>Classes and labs in every building are indexed and can be searched via the top search bar.</p>
+        <p>Use the zoom buttons, mouse wheel, or double-click to zoom in or out.</p>
+        <hr/>
+        <p class="last-info">🚌 Real-time campus shuttle buses are actively simulated on the road network.</p>
+      </div>
+      <a class="close-btn" id="btn-close-instruct" title="Close">X</a>
+    </div>
+  </div>
+
+  <!-- Right Side: Zoom, Recenter, Theme Toggle Buttons -->
+  <div class="zoom-buttons">
+    <button class="icon-button" id="btn-zoomin" title="Zoom In">
+      <img src="/assets/images/plus.svg" alt="+">
+    </button>
+    <button class="icon-button" id="btn-zoomout" title="Zoom Out">
+      <img src="/assets/images/minus.svg" alt="-">
+    </button>
+    <button class="icon-button" id="btn-center" title="Center Campus">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="7"/>
+        <line x1="12" y1="1" x2="12" y2="5"/>
+        <line x1="12" y1="19" x2="12" y2="23"/>
+        <line x1="1" y1="12" x2="5" y2="12"/>
+        <line x1="19" y1="12" x2="23" y2="12"/>
+      </svg>
+    </button>
+    <button class="icon-button" id="btn-theme" title="Toggle Theme (Dark / Light)">
+      <svg id="theme-icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+      <svg id="theme-icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Bottom Left: Info & Layer Buttons -->
+  <div class="layer-button">
+    <button class="icon-button" id="btn-info" title="Campus Info & Legends">
+      <a href="/about" style="display:flex; align-items:center; justify-content:center; width:100%; height:100%;">
+        <img src="/assets/images/info.svg" alt="info">
+      </a>
+    </button>
+    <button class="icon-button" id="btn-layer" title="Toggle SVG / Satellite Map">
+      <img src="/assets/images/layer.svg" alt="layer">
+    </button>
+  </div>
+
+  <!-- Sliding Place Details Drawer -->
+  <div class="place-details">
+    <div class="place-title"></div>
+    <div class="place-main"></div>
+    
+    <div class="floors">
+      <div class="underline"></div>
+    </div>
+    
+    <ul class="classes"></ul>
+    <ul class="classes"></ul>
+    <ul class="classes"></ul>
+    <ul class="classes"></ul>
+  </div>
+
+  <!-- Down Arrow Button to close Place Details -->
+  <div class="get-down-btn" id="btn-hide-details">
+    <img src="/assets/images/down.svg" class="down-arrow" alt="Down arrow">
+  </div>
+
+  <!-- Collapsible EV Shuttle Bus Tracker Widget -->
+  <div class="shuttle-widget" id="shuttle-widget">
+    <div class="shuttle-widget-header" id="widget-toggle" title="Click to collapse / expand">
+      <h3><span>🚌</span> EV Shuttle Tracker</h3>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span class="live-pill">LIVE 60FPS</span>
+        <span id="widget-arrow">▼</span>
+      </div>
+    </div>
+    <div class="shuttle-widget-body" id="widget-content">
+      <div id="bus-cards-list"></div>
+
+      <!-- Charging Station Section -->
+      <div id="charging-station-section" style="margin-top:8px; padding:8px 10px; background:var(--bg-card, #1e1f26); border:1px solid var(--border-color, #363842); border-radius:7px;">
+        <div style="font-size:0.75rem; color:var(--text-muted, #94a3b8); margin-bottom:5px; font-weight:bold;">
+          🔋 Charging Station
+        </div>
+        <div id="charging-bus-list" style="font-size:0.72rem; color:var(--text-main, #e2e8f0);">
+          Loading...
+        </div>
+      </div>
+
+      <div class="shuttle-widget-controls">
+        <button class="btn-ctrl" id="btn-sim-pause">⏸ Pause</button>
+        <button class="btn-ctrl" id="btn-widget-center">🎯 Center</button>
+        <div style="display:flex; align-items:center; gap:4px;">
+          <span>Speed:</span>
+          <select id="sim-speed-select" style="padding:2px 4px; border-radius:4px; font-size:0.75rem;">
+            <option value="0.5">0.5x</option>
+            <option value="1.0" selected>1.0x</option>
+            <option value="2.0">2.0x</option>
+            <option value="3.0">3.0x</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="telemetry-mini">
+        <span>FPS: <strong id="tele-fps">59.8</strong></span>
+        <span>Dijkstra: <strong>4.8ms</strong></span>
+        <span>RAM: <strong>38.4MB</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/map.js"></script>
+  <script src="/static/js/search.js"></script>
+  <script src="/static/js/simulation.js"></script>
+  <script src="/static/js/dashboard.js"></script>
+  <script src="/static/js/main.js"></script>
+</body>
+</html>

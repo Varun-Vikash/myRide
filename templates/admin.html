@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>myRide@BIT - Admin Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Overlock:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Yeon+Sung&display=swap" rel="stylesheet">
+    <!-- Semantic UI -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.css">
+    
+    <style>
+        :root {
+            --primary: #7B68EE; /* mediumslateblue */
+            --bg-page: #14151b;
+            --bg-card: #1e1f26;
+            --bg-input: #282b37;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --text-heading: #cbd5e1;
+            --border: #363842;
+            --shadow: 0 2px 12px #474A56;
+            --radius: 7px;
+            
+            --status-pending: #f59e0b;
+            --status-assigned: #3b82f6;
+            --status-acknowledged: #10b981;
+            --status-completed: #6b7280;
+            --status-cancelled: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-family: 'Overlock', sans-serif;
+            min-height: 100vh;
+            padding-top: 60px;
+        }
+
+        h1, h2, h3, h4, h5, h6, .brand-font {
+            font-family: 'Yeon Sung', cursive;
+            color: var(--text-heading);
+        }
+
+        /* Top Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: var(--primary);
+            font-size: 1.5rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: 1px solid black;
+            border-radius: var(--radius);
+            box-shadow: 2px 2px 0 #474A56;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Overlock', sans-serif;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0 #474A56;
+        }
+        
+        .btn:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 #474A56;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 20px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 15px 20px;
+            cursor: pointer;
+            font-family: 'Overlock', sans-serif;
+            font-size: 16px;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Tables */
+        .ui.table {
+            background: var(--bg-card);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        .ui.table thead th {
+            background: var(--bg-input);
+            color: var(--text-heading);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .ui.table td, .ui.table tr {
+            border-top: 1px solid var(--border);
+        }
+
+        .ui.striped.table tbody tr:nth-child(2n) {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Forms */
+        select, input {
+            background-color: var(--bg-input);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 8px 12px;
+            font-family: 'Overlock', sans-serif;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .badge-pending { background-color: var(--status-pending); color: #000; }
+        .badge-assigned { background-color: var(--status-assigned); }
+        .badge-acknowledged { background-color: #10b981; }
+        .badge-on_the_way { background-color: #8b5cf6; }
+        .badge-picked_up { background-color: #059669; }
+        .badge-completed { background-color: var(--status-completed); }
+        .badge-cancelled { background-color: var(--status-cancelled); }
+
+        .iframe-container {
+            width: 100%;
+            height: 600px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation -->
+    <nav class="navbar">
+        <a href="#" class="navbar-brand brand-font">myRide@BIT</a>
+        <div class="navbar-title brand-font">🛡️ Admin Dashboard</div>
+        <div class="navbar-user">
+            <span>Welcome, {{ user.full_name }}</span>
+            <a href="/logout?role=admin" class="btn">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Tab Navigation -->
+    <div class="tabs">
+        <button class="tab-btn active" id="btn-tab-buses" onclick="openTab('buses', this)">Bus Fleet & Drivers</button>
+        <button class="tab-btn" id="btn-tab-requests" onclick="openTab('requests', this)">
+            Student Requests <span id="requests-badge" style="background:#f59e0b; color:#000; border-radius:10px; padding:2px 7px; font-size:11px; font-weight:bold; margin-left:6px; display:none;">0</span>
+        </button>
+        <button class="tab-btn" id="btn-tab-map" onclick="openTab('map', this)">Campus Map</button>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area">
+        
+        <!-- Tab 1: Bus Fleet -->
+        <div id="tab-buses" class="tab-content active">
+            <div class="card">
+                <h2 class="section-header">Bus Fleet Management</h2>
+                <div id="buses-loading" class="loading">Loading buses...</div>
+                <table class="ui celled striped table" id="buses-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Bus ID</th>
+                            <th>Route</th>
+                            <th>Status</th>
+                            <th>Capacity</th>
+                            <th>Current Driver</th>
+                            <th>Assign Driver</th>
+                        </tr>
+                    </thead>
+                    <tbody id="buses-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab 2: Student Requests -->
+        <div id="tab-requests" class="tab-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2 class="section-header" style="margin: 0;">Student Bus Requests</h2>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span id="requests-live-indicator" style="font-size:12px; color:#10b981;">● Auto-updating (every 5s)</span>
+                        <button class="btn" onclick="fetchRequests()" style="padding: 6px 12px; font-size: 13px;">↻ Refresh</button>
+                    </div>
+                </div>
+                <div id="requests-loading" class="loading">Loading requests...</div>
+                <table class="ui celled striped table" id="requests-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Student</th>
+                            <th>Pickup</th>
+                            <th>Dropoff</th>
+                            <th>Created</th>
+                            <th>Status</th>
+                            <th>Assigned Bus</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requests-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab 3: Campus Map -->
+        <div id="tab-map" class="tab-content">
+            <div class="card">
+                <h2 class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    Campus Map
+                    <a href="/" target="_blank" class="btn">Open Full Map</a>
+                </h2>
+                <div class="iframe-container">
+                    <iframe src="/"></iframe>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Global State
+        let driversList = [];
+        let busesList = [];
+
+        // Tab Switching
+        function openTab(tabName, btnEl) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            const targetContent = document.getElementById('tab-' + tabName);
+            if (targetContent) targetContent.classList.add('active');
+            
+            if (btnEl) {
+                btnEl.classList.add('active');
+            } else {
+                const btn = document.getElementById('btn-tab-' + tabName);
+                if (btn) btn.classList.add('active');
+            }
+            
+            if (tabName === 'requests') {
+                fetchRequests();
+            } else if (tabName === 'buses') {
+                fetchBusesAndDrivers();
+            }
+        }
+
+        // --- Tab 1: Buses ---
+        async function fetchBusesAndDrivers() {
+            try {
+                const drvRes = await fetch('/api/admin/drivers');
+                if (drvRes.ok) driversList = await drvRes.json();
+
+                const busRes = await fetch('/api/admin/buses');
+                if (busRes.ok) {
+                    busesList = await busRes.json();
+                    renderBuses();
+                }
+            } catch (err) {
+                console.error("Error fetching buses/drivers", err);
+            }
+        }
+
+        function renderBuses() {
+            const loadingEl = document.getElementById('buses-loading');
+            const tableEl = document.getElementById('buses-table');
+            if (loadingEl) loadingEl.style.display = 'none';
+            if (tableEl) tableEl.style.display = 'table';
+            
+            const tbody = document.getElementById('buses-body');
+            tbody.innerHTML = '';
+
+            busesList.forEach(bus => {
+                const tr = document.createElement('tr');
+                
+                let options = `<option value="">-- Select Driver --</option>`;
+                driversList.forEach(d => {
+                    const isSelected = bus.driver_id === d.id ? 'selected' : '';
+                    options += `<option value="${d.id}" ${isSelected}>${d.full_name} (${d.username})</option>`;
+                });
+
+                const batteryDisplay = bus.battery_level !== undefined ? ` (⚡${bus.battery_level}%)` : '';
+                const busStatusBadge = bus.bus_status === 'charging' 
+                    ? `<span class="badge" style="background:rgba(245,158,11,0.2); color:#f59e0b; border:1px solid #f59e0b;">Charging${batteryDisplay}</span>`
+                    : bus.bus_status === 'backup'
+                    ? `<span class="badge" style="background:rgba(139,92,246,0.2); color:#a78bfa; border:1px solid #a78bfa;">Backup Ready${batteryDisplay}</span>`
+                    : `<span class="badge badge-assigned">Active${batteryDisplay}</span>`;
+
+                tr.innerHTML = `
+                    <td><strong style="color:var(--primary); font-size:14px;">${bus.bus_no || 'Bus #' + bus.id}</strong></td>
+                    <td>${bus.route_name || bus.route_id || 'Campus Route'}</td>
+                    <td>${busStatusBadge}</td>
+                    <td>${bus.capacity || 32} Seats</td>
+                    <td><strong>${bus.driver_name || '<span style="color:var(--text-muted);">Unassigned</span>'}</strong></td>
+                    <td>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <select id="assign-driver-${bus.id}" style="padding: 6px 10px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border); border-radius:4px;">
+                                ${options}
+                            </select>
+                            <button class="btn" onclick="assignDriver(${bus.id})">Assign</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function assignDriver(busId) {
+            const driverId = document.getElementById(`assign-driver-${busId}`).value;
+            if (!driverId) {
+                alert("Please select a driver");
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/admin/assign-driver', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ bus_id: busId, driver_id: driverId })
+                });
+                
+                if (res.ok) {
+                    alert("Driver assigned successfully!");
+                    fetchBusesAndDrivers();
+                } else {
+                    alert("Failed to assign driver");
+                }
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        // --- Tab 2: Requests ---
+        async function fetchRequests() {
+            try {
+                const res = await fetch('/api/admin/requests');
+                if (res.ok) {
+                    const requests = await res.json();
+                    renderRequests(requests);
+                }
+            } catch (err) {
+                console.error("Error fetching requests", err);
+            }
+        }
+
+        function getStatusBadge(status) {
+            const s = (status || 'pending').toLowerCase();
+            let label = s.toUpperCase();
+            if (s === 'on_the_way') label = 'ON THE WAY 🚌';
+            else if (s === 'picked_up') label = 'PICKED UP 🎒';
+            else if (s === 'pending') label = 'PENDING ⏳';
+            else if (s === 'assigned') label = 'ASSIGNED 📋';
+            else if (s === 'acknowledged') label = 'ACKNOWLEDGED ✓';
+            else if (s === 'completed') label = 'COMPLETED 🏁';
+            return `<span class="badge badge-${s}">${label}</span>`;
+        }
+
+        function renderRequests(requests) {
+            const loadingEl = document.getElementById('requests-loading');
+            const tableEl = document.getElementById('requests-table');
+            if (loadingEl) loadingEl.style.display = 'none';
+            if (tableEl) tableEl.style.display = 'table';
+            
+            // Update badge on tab button
+            const pendingCount = (requests || []).filter(r => (r.status || '').toLowerCase() === 'pending').length;
+            const badgeEl = document.getElementById('requests-badge');
+            if (badgeEl) {
+                if (pendingCount > 0) {
+                    badgeEl.innerText = pendingCount;
+                    badgeEl.style.display = 'inline-block';
+                } else {
+                    badgeEl.style.display = 'none';
+                }
+            }
+            
+            // Preserve user-selected dropdown values so 5s polling doesn't reset active selection
+            const savedSelections = {};
+            document.querySelectorAll('select[id^="assign-bus-"]').forEach(sel => {
+                if (sel.value) savedSelections[sel.id] = sel.value;
+            });
+
+            const tbody = document.getElementById('requests-body');
+            if (!requests || requests.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted); font-style:italic;">No student requests found yet. When a student requests a ride, it will appear here automatically every 5 seconds.</td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            
+            // Build bus options for assignment from active buses
+            let busOptions = `<option value="">-- Select Bus --</option>`;
+            busesList.forEach(b => {
+                busOptions += `<option value="${b.id}">${b.bus_no} (${b.route_name || b.route_id})</option>`;
+            });
+
+            requests.forEach(req => {
+                const tr = document.createElement('tr');
+                const s = (req.status || 'pending').toLowerCase();
+                const isPending = s === 'pending';
+                
+                let assignCol = '-';
+                if (isPending) {
+                    const selectId = `assign-bus-${req.id}`;
+                    assignCol = `
+                        <div style="display: flex; gap: 8px; align-items:center;">
+                            <select id="${selectId}" style="padding:6px 10px; border-radius:4px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border);">
+                                ${busOptions}
+                            </select>
+                            <button class="btn" onclick="assignBusToRequest(${req.id})">Assign Bus</button>
+                        </div>
+                    `;
+                } else if (req.bus_no) {
+                    assignCol = `<span style="color:var(--primary); font-weight:bold;">${req.bus_no}</span> ${req.driver_name ? '<span style="color:var(--text-muted); font-size:12px;">(' + req.driver_name + ')</span>' : ''}`;
+                }
+
+                const dateStr = req.created_at ? new Date(req.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'}) : 'Just now';
+
+                tr.innerHTML = `
+                    <td><strong>#${req.id}</strong></td>
+                    <td><strong>${req.student_name || 'Student'}</strong></td>
+                    <td><span style="color:#10b981;">📍 ${req.pickup_stop || 'N/A'}</span></td>
+                    <td><span style="color:#ef4444;">🎯 ${req.drop_stop || req.drop_location || 'N/A'}</span></td>
+                    <td><span style="color:var(--text-muted); font-size:12px;">${dateStr}</span></td>
+                    <td>${getStatusBadge(req.status)}</td>
+                    <td>${assignCol}</td>
+                `;
+                tbody.appendChild(tr);
+
+                // Restore previous selection if exists
+                const sel = document.getElementById(`assign-bus-${req.id}`);
+                if (sel && savedSelections[`assign-bus-${req.id}`]) {
+                    sel.value = savedSelections[`assign-bus-${req.id}`];
+                }
+            });
+        }
+
+        async function assignBusToRequest(reqId) {
+            const sel = document.getElementById(`assign-bus-${reqId}`);
+            if (!sel || !sel.value) {
+                alert("Please select a bus from the dropdown first");
+                return;
+            }
+            const busId = sel.value;
+            
+            try {
+                const res = await fetch(`/api/admin/requests/${reqId}/assign`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ bus_id: busId })
+                });
+                if (res.ok) {
+                    fetchRequests();
+                } else {
+                    alert("Failed to assign bus");
+                }
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        // Initialize & Auto-poll
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial fetch of both buses and requests
+            fetchBusesAndDrivers().then(() => {
+                fetchRequests();
+            });
+            
+            // Real-time automatic polling every 5 seconds (5000ms)
+            setInterval(() => {
+                fetchRequests();
+            }, 5000);
+
+            // Also refresh bus fleet states every 15 seconds
+            setInterval(() => {
+                if (document.getElementById('tab-buses').classList.contains('active')) {
+                    fetchBusesAndDrivers();
+                }
+            }, 15000);
+        });
+    </script>
+</body>
+</html>

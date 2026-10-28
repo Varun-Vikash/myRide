@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>myRide@BIT - Driver Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Overlock:ital,wght@0,400;0,700;0,900;1,400&family=Yeon+Sung&display=swap" rel="stylesheet">
+    <!-- Semantic UI -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.css">
+    
+    <style>
+        :root {
+            --primary: mediumslateblue; /* #7B68EE */
+            --bg-page: #14151b;
+            --bg-surface: #1e1f26;
+            --bg-input: #282b37;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --text-heading: #cbd5e1;
+            --border-color: #363842;
+            --border-radius: 7px;
+            --shadow: 0 2px 12px #474A56;
+            
+            --status-pending: #f59e0b;
+            --status-assigned: #3b82f6;
+            --status-acknowledged: #10b981;
+            --status-completed: #6b7280;
+            --status-cancelled: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-family: 'Overlock', sans-serif;
+            margin: 0;
+            padding: 0;
+            padding-top: 60px; /* For fixed navbar */
+        }
+
+        h1, h2, h3, h4, h5, h6, .brand-font {
+            font-family: 'Yeon Sung', cursive;
+            color: var(--text-heading);
+        }
+
+        /* Top Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-family: 'Yeon Sung', cursive;
+            color: var(--primary);
+            font-size: 1.5rem;
+            text-decoration: none;
+        }
+
+        .navbar-title {
+            font-size: 1.25rem;
+            color: var(--text-heading);
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--text-main);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: 1px solid black;
+            border-radius: var(--border-radius);
+            box-shadow: 2px 2px 0 #474A56;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Overlock', sans-serif;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.9rem;
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0 #474A56;
+        }
+        
+        .btn-ack {
+            background: var(--status-acknowledged);
+        }
+        
+        .btn-complete {
+            background: var(--status-assigned);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Info Banner */
+        .info-banner {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-banner p {
+            margin: 5px 0;
+            color: var(--text-muted);
+        }
+        
+        .info-banner .value {
+            color: var(--text-main);
+            font-weight: bold;
+        }
+        
+        .bus-badge {
+            background-color: var(--primary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+        }
+
+        /* Requests Section */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .request-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .request-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .request-details {
+            flex-grow: 1;
+        }
+        
+        .student-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text-heading);
+            margin-bottom: 5px;
+        }
+        
+        .route-info {
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+        
+        .time-info {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: var(--border-radius);
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+            margin-left: 10px;
+            text-transform: capitalize;
+        }
+
+        .badge-pending { background-color: var(--status-pending); }
+        .badge-assigned { background-color: var(--status-assigned); }
+        .badge-acknowledged { background-color: var(--status-acknowledged); }
+        .badge-completed { background-color: var(--status-completed); }
+        .badge-cancelled { background-color: var(--status-cancelled); }
+
+        .request-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 150px;
+            text-align: right;
+        }
+
+        .empty-state {
+            background-color: var(--bg-surface);
+            border: 1px dashed var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+        
+        .map-link-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .map-link {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .map-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">myRide@BIT</a>
+        <div class="navbar-title">🚌 Driver Dashboard</div>
+        <div class="navbar-user">
+            <span>Welcome, {{ user.full_name }}</span>
+            <a href="/logout?role=driver" class="btn">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        
+        <!-- Driver Info Banner -->
+        <div class="info-banner" id="driver-info">
+            <div id="driver-details">Loading assigned bus information...</div>
+        </div>
+
+        <!-- Pickup Requests Section -->
+        <div class="section-header">
+            <h2>📋 Assigned Pickup Requests</h2>
+        </div>
+        
+        <div class="request-list" id="requests-list">
+            <!-- Requests injected here via JS -->
+            <div class="empty-state">Loading pickup requests...</div>
+        </div>
+        
+        <!-- Quick link to Campus Map -->
+        <div class="map-link-container">
+            <a href="/" class="map-link">View Campus Map &rarr;</a>
+        </div>
+
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDriverInfo();
+            fetchRequests();
+            
+            // Auto-refresh every 5 seconds
+            setInterval(fetchRequests, 5000);
+        });
+        
+        async function fetchDriverInfo() {
+            try {
+                const response = await fetch('/api/driver/my-bus');
+                const infoContainer = document.getElementById('driver-details');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const bus = data && (data.bus || data);
+                    
+                    if (bus && (bus.bus_no || bus.bus_number)) {
+                        infoContainer.innerHTML = `
+                            <div>
+                                <p>Driver Name: <span class="value">{{ user.full_name }}</span></p>
+                                <p>Assigned Bus: <span class="bus-badge">${bus.bus_no || bus.bus_number}</span></p>
+                                <p>Route Name: <span class="value">${bus.route_name || 'Campus Route'}</span></p>
+                            </div>
+                        `;
+                    } else {
+                        infoContainer.innerHTML = `
+                            <p>You have not been assigned to a bus yet. Please contact the administrator.</p>
+                        `;
+                    }
+                } else {
+                    infoContainer.innerHTML = `<p>Error loading bus information.</p>`;
+                }
+            } catch (error) {
+                console.error("Error fetching driver info:", error);
+                document.getElementById('driver-details').innerHTML = `<p>Error connecting to server.</p>`;
+            }
+        }
+        
+        async function fetchRequests() {
+            try {
+                const response = await fetch('/api/driver/requests');
+                const listContainer = document.getElementById('requests-list');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const requests = data.requests || data || []; // Handle different response formats
+                    
+                    if (requests.length === 0) {
+                        listContainer.innerHTML = `
+                            <div class="empty-state">No pickup requests assigned. Waiting for new assignments...</div>
+                        `;
+                        return;
+                    }
+                    
+                    let html = '';
+                    requests.forEach(req => {
+                        // Determine button based on status
+                        let actionHtml = '';
+                        if (req.status === 'assigned') {
+                            actionHtml = `<button class="btn btn-ack" onclick="updateRequestStatus('${req.id}', 'acknowledge')">Acknowledge Pickup &#10003;</button>`;
+                        } else if (req.status === 'acknowledged') {
+                            actionHtml = `<button class="btn btn-complete" onclick="updateRequestStatus('${req.id}', 'complete')">Complete Trip &#127937;</button>`;
+                        }
+                        
+                        html += `
+                            <div class="request-card">
+                                <div class="request-details">
+                                    <div class="student-name">
+                                        ${req.student_name}
+                                        <span class="badge badge-${req.status}">${req.status}</span>
+                                    </div>
+                                    <div class="route-info">${req.pickup_stop} &rarr; ${req.drop_stop}</div>
+                                    <div class="time-info">Created: ${req.created_at || 'Just now'}</div>
+                                </div>
+                                <div class="request-actions">
+                                    ${actionHtml}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    listContainer.innerHTML = html;
+                }
+            } catch (error) {
+                console.error("Error fetching requests:", error);
+            }
+        }
+        
+        async function updateRequestStatus(requestId, action) {
+            try {
+                const response = await fetch(`/api/driver/requests/${requestId}/${action}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    fetchRequests(); // Refresh list
+                } else {
+                    alert(`Failed to ${action} request.`);
+                }
+            } catch (error) {
+                console.error(`Error updating request ${action}:`, error);
+                alert("Error connecting to server.");
+            }
+        }
+    </script>
+</body>
+</html>

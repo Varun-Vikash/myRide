@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | myRide@BIT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Overlock:ital,wght@0,400;0,700;1,400&family=Yeon+Sung&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #14151b;
+            --surface-color: #1e1f26;
+            --input-bg: #282b37;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --text-heading: #cbd5e1;
+            --accent-color: mediumslateblue;
+            --border-color: #363842;
+            --border-radius: 7px;
+            --shadow: 0 2px 12px #474A56;
+            --btn-shadow: 2px 2px 0 #474A56;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Overlock', sans-serif;
+            padding-top: 80px; /* Space for fixed nav */
+        }
+
+        h1, h2, h3, .brand {
+            font-family: 'Yeon Sung', cursive;
+            color: var(--text-heading);
+            margin: 0;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .navbar .brand {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+
+        .navbar .title {
+            font-size: 1.25rem;
+        }
+
+        .navbar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: 1px solid black;
+            border-radius: var(--border-radius);
+            box-shadow: var(--btn-shadow);
+            padding: 0.5rem 1rem;
+            font-family: 'Overlock', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        .btn-danger {
+            background-color: #ef4444;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .column {
+            flex: 1 1 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            box-sizing: border-box;
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        select {
+            width: 100%;
+            background-color: var(--input-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 0.75rem;
+            font-family: 'Overlock', sans-serif;
+            font-size: 1rem;
+            box-sizing: border-box;
+            appearance: none;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        #message-area {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
+            display: none;
+        }
+        
+        .msg-success {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+        
+        .msg-error {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+
+        /* Requests List */
+        .request-item {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .request-route {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .request-meta {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-pending { background-color: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .badge-assigned { background-color: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .badge-acknowledged { background-color: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .badge-on_the_way { background-color: rgba(139, 92, 246, 0.25); color: #a78bfa; border: 1px solid #a78bfa; }
+        .badge-picked_up { background-color: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid #34d399; }
+        .badge-completed { background-color: rgba(107, 114, 128, 0.2); color: #9ca3af; }
+        .badge-cancelled { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+        .request-actions {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 2rem 0;
+            font-style: italic;
+        }
+        
+        .campus-map-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .campus-map-link a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        
+        .campus-map-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">myRide@BIT</div>
+        <div class="title">🎓 Student Dashboard</div>
+        <div class="user-info">
+            <span>Welcome, {{ user.full_name }}</span>
+            <a href="/logout?role=student" class="btn">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="column">
+            <div class="card">
+                <h2 class="card-header">🚌 Request a Bus</h2>
+                <form id="request-form">
+                    <div class="form-group">
+                        <label for="pickup_stop">Pickup Point</label>
+                        <select id="pickup_stop" name="pickup_stop" required>
+                            <option value="">Select pickup point...</option>
+                            {% for stop in bus_stops %}
+                            <option value="{{ stop }}">{{ stop }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="drop_stop">Drop Location</label>
+                        <select id="drop_stop" name="drop_stop" required>
+                            <option value="">Select drop location...</option>
+                            {% for stop in bus_stops %}
+                            <option value="{{ stop }}">{{ stop }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Submit Request</button>
+                    
+                    <div id="message-area"></div>
+                </form>
+            </div>
+            
+            <div class="card campus-map-link">
+                <a href="/">View Campus Map →</a>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="card">
+                <h2 class="card-header">📋 My Bus Requests</h2>
+                <div id="requests-list">
+                    <div class="empty-state">Loading your requests...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const requestForm = document.getElementById('request-form');
+        const messageArea = document.getElementById('message-area');
+        const requestsList = document.getElementById('requests-list');
+
+        function showMessage(msg, isError = false) {
+            messageArea.textContent = msg;
+            messageArea.className = isError ? 'msg-error' : 'msg-success';
+            messageArea.style.display = 'block';
+            setTimeout(() => {
+                messageArea.style.display = 'none';
+            }, 5000);
+        }
+
+        requestForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const pickup_stop = document.getElementById('pickup_stop').value;
+            const drop_stop = document.getElementById('drop_stop').value;
+            
+            if (pickup_stop === drop_stop) {
+                showMessage("Pickup and drop locations cannot be the same.", true);
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/student/request', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ pickup_stop, drop_stop })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage("Bus requested successfully!");
+                    requestForm.reset();
+                    fetchRequests(); // Refresh list
+                } else {
+                    showMessage(data.error || "Failed to request bus.", true);
+                }
+            } catch (error) {
+                showMessage("Network error occurred.", true);
+                console.error('Error submitting request:', error);
+            }
+        });
+
+        function getStatusBadge(status) {
+            const statusLower = (status || '').toLowerCase();
+            return `<span class="badge badge-${statusLower}">${status}</span>`;
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleString();
+        }
+
+        async function fetchRequests() {
+            try {
+                const response = await fetch('/api/student/my-requests');
+                if (!response.ok) throw new Error('Failed to fetch');
+                
+                const data = await response.json();
+                const reqList = Array.isArray(data) ? data : (data.requests || []);
+                renderRequests(reqList);
+            } catch (error) {
+                console.error('Error fetching requests:', error);
+            }
+        }
+
+        function renderRequests(requests) {
+            if (!requests || requests.length === 0) {
+                requestsList.innerHTML = '<div class="empty-state">No requests yet. Submit your first bus request!</div>';
+                return;
+            }
+
+            requestsList.innerHTML = requests.map(req => {
+                const status = (req.status || 'pending').toLowerCase();
+                const canCancel = ['pending', 'assigned'].includes(status);
+                const busNo = req.bus_no || req.bus_number;
+                
+                let driverInfo = '';
+                if (['assigned', 'acknowledged', 'on_the_way', 'picked_up', 'completed'].includes(status) && busNo) {
+                    driverInfo = `<div class="request-meta" style="color:var(--accent-color); font-weight:600;">🚌 Assigned: ${busNo} ${req.driver_name ? '(Driver: ' + req.driver_name + ')' : ''}</div>`;
+                }
+                
+                return `
+                    <div class="request-item">
+                        <div class="request-route">
+                            ${req.pickup_stop} <span style="color:var(--text-muted)">→</span> ${req.drop_stop}
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            ${getStatusBadge(req.status)}
+                        </div>
+                        ${driverInfo}
+                        <div class="request-meta">🕒 ${formatDate(req.created_at)}</div>
+                        
+                        ${canCancel ? `
+                        <div class="request-actions">
+                            <button class="btn btn-danger" onclick="cancelRequest('${req.id || req._id}')">Cancel</button>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function cancelRequest(requestId) {
+            if (!confirm('Are you sure you want to cancel this request?')) return;
+            
+            try {
+                const response = await fetch(`/api/student/requests/${requestId}/cancel`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    fetchRequests();
+                } else {
+                    alert('Failed to cancel request');
+                }
+            } catch (error) {
+                console.error('Error canceling request:', error);
+                alert('Error canceling request');
+            }
+        }
+
+        // Initial load
+        fetchRequests();
+        
+        // Auto-refresh every 5 seconds (5000ms)
+        setInterval(fetchRequests, 5000);
+    </script>
+</body>
+</html>
