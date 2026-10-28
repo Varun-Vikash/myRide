@@ -305,6 +305,7 @@ const MapEngine = {
 
     const stage = document.getElementById('map-stage');
     if (stage) {
+      stage.setAttribute('data-zoom', lvl);
       stage.style.width = `${w}px`;
       stage.style.height = `${h}px`;
     }
@@ -344,7 +345,11 @@ const MapEngine = {
     if (!element) return;
     element.innerHTML = "";
     (list || []).forEach(legend => {
-      element.innerHTML += `<img src='${legend.link}' class='legend' id='${legend.id}' style='top: ${legend.top}; left: ${legend.left};' alt='legend' loading='lazy'>`;
+      const cleanTitle = (legend.id || 'Amenity')
+        .replace(/-icon(-\d+)?$/i, '')
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase());
+      element.innerHTML += `<img src='${legend.link}' class='legend' id='${legend.id}' title='${cleanTitle}' style='top: ${legend.top}; left: ${legend.left};' alt='${cleanTitle}' loading='lazy'>`;
     });
   },
 

@@ -37,6 +37,11 @@ class CampusGraphService:
             self.tags[lvl] = extract_ruby_json(os.path.join(LIB_ASSETS_DIR, f'zoom_level_{lvl}.rb')) or {"tags": []}
             self.legends[lvl] = extract_ruby_json(os.path.join(LIB_ASSETS_DIR, f'legends_{lvl}.rb')) or []
 
+        self.building_index = extract_ruby_json(os.path.join(LIB_ASSETS_DIR, 'index.rb')) or {"buildings": []}
+
+        # Mathematically calibrate coordinates across all zoom levels
+        self._calibrate_coordinates()
+
         # Filter ghost/out-of-bounds eastern perimeter vehicle nodes that lack drawn road geometry on Map-dark.svg
         out_of_bounds_vehicle_nodes = {65, 66, 71, 72, 73, 74, 75, 78, 79, 80}
         raw_v_junctions = extract_ruby_json(os.path.join(LIB_ASSETS_DIR, 'vehicle_junction_points.rb')) or []
@@ -53,6 +58,83 @@ class CampusGraphService:
 
         self.vehicle_graph = self._build_adj(self.vehicle_edges)
         self.ped_graph = self._build_adj(self.ped_edges)
+
+    def _calibrate_coordinates(self):
+        """
+        Mathematically calibrates tags and legends for zoom levels 1, 2, and 3
+        relative to the canonical 3420 x 3876 master canvas (Level 4, scale 1.0).
+        At zoom level L in {1, 2, 3, 4}, scale = 1.0 / (1.5 ** (4 - L)).
+        Positions are strictly projected:
+            left = round(base_left * scale) px
+            top  = round(base_top * scale) px
+        This eliminates hand-coded drift, icon swapping, and random dispersal.
+        """
+        t4_list = self.tags.get(4, {}).get('tags', [])
+        t4_map = {t['id']: t for t in t4_list}
+
+        l4_list = self.legends.get(4, [])
+        l4_map = {item['id']: item for item in l4_list}
+        l4_map_lower = {item['id'].lower(): item for item in l4_list}
+
+        legend_aliases = {
+            'football-ground': 'football-icon',
+            'cricket-ground': 'cricket-icon',
+            'hostel-icon-1': 'Narmadha-icon',
+            'hostel-icon-2': 'Ganga-icon',
+            'hostel-icon-3': 'emerald-icon',
+            'hostel-icon-4': 'sapphire-icon',
+        }
+
+        for lvl in [1, 2, 3]:
+            scale = 1.0 / (1.5 ** (4 - lvl))
+
+            # Calibrate building tags
+            raw_tags = self.tags.get(lvl, {}).get('tags', [])
+            calibrated_tags = []
+            for t in raw_tags:
+                tid = t.get('id')
+                if tid in t4_map:
+                    base_x = float(str(t4_map[tid]['left']).replace('px', ''))
+                    base_y = float(str(t4_map[tid]['top']).replace('px', ''))
+                    calibrated_tags.append({
+                        "id": tid,
+                        "name": t.get('name', t4_map[tid].get('name', '')),
+                        "left": f"{round(base_x * scale)}px",
+                        "top": f"{round(base_y * scale)}px"
+                    })
+                else:
+                    calibrated_tags.append(t)
+            self.tags[lvl] = {"tags": calibrated_tags}
+
+            # Calibrate legend amenity icons
+            raw_legends = self.legends.get(lvl, [])
+            if lvl == 1 and not raw_legends:
+                # Key landmark amenities for campus overview
+                raw_legends = [
+                    {'id': 'library-icon-1'},
+                    {'id': 'food-icon-3'},
+                    {'id': 'medical-icon'},
+                    {'id': 'atm-icon-1'},
+                    {'id': 'football-icon'}
+                ]
+
+            calibrated_legends = []
+            for item in raw_legends:
+                lid = item.get('id', '')
+                canonical_id = legend_aliases.get(lid, lid)
+                canon = l4_map.get(canonical_id) or l4_map_lower.get(canonical_id.lower())
+                if canon:
+                    base_x = float(str(canon['left']).replace('px', ''))
+                    base_y = float(str(canon['top']).replace('px', ''))
+                    calibrated_legends.append({
+                        "id": lid,
+                        "link": canon.get('link', item.get('link')),
+                        "left": f"{round(base_x * scale)}px",
+                        "top": f"{round(base_y * scale)}px"
+                    })
+                else:
+                    calibrated_legends.append(item)
+            self.legends[lvl] = calibrated_legends
 
     def _build_adj(self, edge_list):
         adj = {}
