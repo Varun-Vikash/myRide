@@ -251,8 +251,13 @@
 
     <!-- Top Navigation -->
     <nav class="navbar">
-        <a href="#" class="navbar-brand brand-font">myRide@BIT</a>
+        <a href="/" target="_blank" class="navbar-brand brand-font" title="Open Campus Live Map">myRide@BIT</a>
         <div class="navbar-title brand-font">🛡️ Admin Dashboard</div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <a href="/driver" target="_blank" class="btn" style="background:#282b37; border-color:#363842; font-size:13px; padding:6px 12px;" title="Open Driver Dashboard in new tab">🚌 Driver ↗</a>
+            <a href="/student" target="_blank" class="btn" style="background:#282b37; border-color:#363842; font-size:13px; padding:6px 12px;" title="Open Student Dashboard in new tab">🎓 Student ↗</a>
+            <a href="/login" target="_blank" class="btn" style="background:#282b37; border-color:#363842; font-size:13px; padding:6px 12px;" title="Open Portal Hub">🔑 Hub ↗</a>
+        </div>
         <div class="navbar-user">
             <span>Welcome, {{ user.full_name }}</span>
             <a href="/logout?role=admin" class="btn">Logout</a>

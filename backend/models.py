@@ -109,7 +109,31 @@ class BusRequest(db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    """Role-aware user loader for multi-tab simultaneous authentication."""
+    from flask import session, request
+    try:
+        path = request.path if request else ''
+        role_uid = None
+        if path.startswith('/admin') or path.startswith('/api/admin') or path == '/login/admin':
+            role_uid = session.get('admin_user_id')
+        elif path.startswith('/driver') or path.startswith('/api/driver') or path == '/login/driver':
+            role_uid = session.get('driver_user_id')
+        elif path.startswith('/student') or path.startswith('/api/student') or path == '/login/student':
+            role_uid = session.get('student_user_id')
+        else:
+            active_role = session.get('active_role')
+            if active_role:
+                role_uid = session.get(f'{active_role}_user_id')
+            if not role_uid:
+                role_uid = user_id
+
+        target_id = int(role_uid) if role_uid else int(user_id)
+        return User.query.get(target_id)
+    except Exception:
+        try:
+            return User.query.get(int(user_id)) if user_id else None
+        except Exception:
+            return None
 
 
 # List of available campus bus stops for pickup/drop selection

@@ -42,7 +42,7 @@ def create_app():
     # Initialize Extensions
     db.init_app(app)
     login_manager.init_app(app)
-    login_manager.login_view = 'login_student'
+    login_manager.login_view = 'login_hub'
 
     # Multi-tab request loader for role-scoped user authentication
     @login_manager.request_loader
@@ -52,10 +52,10 @@ def create_app():
         user_id = None
         if path.startswith('/admin') or path.startswith('/api/admin') or path == '/login/admin':
             user_id = session.get('admin_user_id')
-        elif path.startswith('/student') or path.startswith('/api/student') or path == '/login/student':
-            user_id = session.get('student_user_id')
         elif path.startswith('/driver') or path.startswith('/api/driver') or path == '/login/driver':
             user_id = session.get('driver_user_id')
+        elif path.startswith('/student') or path.startswith('/api/student') or path == '/login/student':
+            user_id = session.get('student_user_id')
         else:
             active_role = session.get('active_role')
             if active_role:
@@ -64,7 +64,10 @@ def create_app():
                 user_id = session.get('_user_id')
 
         if user_id:
-            return User.query.get(int(user_id))
+            try:
+                return User.query.get(int(user_id))
+            except Exception:
+                return None
         return None
 
     # Create database tables
@@ -76,7 +79,10 @@ def create_app():
 
     @app.after_request
     def add_no_cache_headers(response):
-        if request.path.startswith('/api/') or request.path.startswith('/static/'):
+        # Prevent browser caching of authenticated dashboards & API responses across multiple tabs
+        if (request.path.startswith('/api/') or 
+            request.path.startswith('/static/') or 
+            request.path in ['/admin', '/driver', '/student', '/login', '/login/admin', '/login/driver', '/login/student']):
             response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
             response.headers['Pragma'] = 'no-cache'
             response.headers['Expires'] = '0'
@@ -96,8 +102,26 @@ def create_app():
         return send_from_directory(ASSETS_DIR, filename)
 
     # ──────────────────────────────────────────────
-    # Login Pages
+    # Login & Multi-Role Hub Pages
     # ──────────────────────────────────────────────
+    @app.route('/login', methods=['GET'])
+    def login_hub():
+        from flask import session
+        admin_id = session.get('admin_user_id')
+        driver_id = session.get('driver_user_id')
+        student_id = session.get('student_user_id')
+
+        admin_user = User.query.get(int(admin_id)) if admin_id else None
+        driver_user = User.query.get(int(driver_id)) if driver_id else None
+        student_user = User.query.get(int(student_id)) if student_id else None
+
+        return render_template(
+            'login_hub.html',
+            admin_user=admin_user,
+            driver_user=driver_user,
+            student_user=student_user
+        )
+
     @app.route('/login/admin', methods=['GET'])
     def login_admin_page():
         from flask import session
@@ -123,7 +147,7 @@ def create_app():
         return render_template('login_student.html')
 
     # ──────────────────────────────────────────────
-    # Auth Actions
+    # Auth Actions & Peer Demo Convenience Endpoint
     # ──────────────────────────────────────────────
     @app.route('/auth/login', methods=['POST'])
     def auth_login():
@@ -136,11 +160,34 @@ def create_app():
         if user and user.check_password(password):
             session[f'{role}_user_id'] = user.id
             session['active_role'] = role
+            session.modified = True
             login_user(user)
             return redirect(f'/{role}')
         
         flash('Invalid username or password.', 'error')
         return redirect(f'/login/{role}')
+
+    @app.route('/auth/demo-login')
+    def demo_login():
+        """Instant multi-role session bootstrapper for effortless peer presentations."""
+        from flask import session
+        admin = User.query.filter_by(username='admin', role='admin').first()
+        driver = User.query.filter_by(username='driver1', role='driver').first()
+        student = User.query.filter_by(username='student1', role='student').first()
+
+        if admin:
+            session['admin_user_id'] = admin.id
+        if driver:
+            session['driver_user_id'] = driver.id
+        if student:
+            session['student_user_id'] = student.id
+        session['active_role'] = 'admin'
+        session.modified = True
+
+        target_role = request.args.get('role', 'all')
+        if target_role in ['admin', 'driver', 'student']:
+            return redirect(f'/{target_role}')
+        return redirect('/login')
 
     @app.route('/logout')
     def auth_logout():
@@ -154,15 +201,18 @@ def create_app():
                 role = 'driver'
             elif '/student' in ref:
                 role = 'student'
-            elif current_user.is_authenticated:
-                role = current_user.role
             else:
-                role = 'student'
+                role = session.get('active_role', 'student')
 
         session.pop(f'{role}_user_id', None)
         if session.get('active_role') == role:
             session.pop('active_role', None)
-        logout_user()
+        session.modified = True
+
+        # Only flush Flask-Login if all role sessions are completely signed out
+        if not (session.get('admin_user_id') or session.get('driver_user_id') or session.get('student_user_id')):
+            logout_user()
+            
         return redirect(f'/login/{role}')
 
     # ──────────────────────────────────────────────

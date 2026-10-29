@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>myRide@BIT - Transit Portal Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Overlock:ital,wght@0,400;0,700;1,400&family=Yeon+Sung&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #14151b;
+            --bg-card: #1e1f26;
+            --bg-card-hover: #262732;
+            --bg-input: #282b37;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --text-heading: #cbd5e1;
+            --primary: #7B68EE; /* mediumslateblue */
+            --border: #363842;
+            --radius: 10px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+            --btn-shadow: 2px 2px 0 #474A56;
+            --green: #10b981;
+            --amber: #f59e0b;
+            --blue: #3b82f6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-family: 'Overlock', sans-serif;
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, h2, h3, .brand-font {
+            font-family: 'Yeon Sung', cursive;
+            color: var(--text-heading);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1050px;
+        }
+
+        /* Demo Action Banner */
+        .demo-banner {
+            background: linear-gradient(135deg, rgba(123, 104, 238, 0.15), rgba(59, 130, 246, 0.15));
+            border: 1px solid rgba(123, 104, 238, 0.4);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .demo-banner-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .demo-banner-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .demo-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* Cards Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 22px;
+            margin-bottom: 35px;
+        }
+
+        .portal-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 26px 22px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.18s, border-color 0.18s, background-color 0.18s;
+            position: relative;
+        }
+
+        .portal-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            background-color: var(--bg-card-hover);
+        }
+
+        .portal-icon {
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+        }
+
+        .portal-title {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+        }
+
+        .portal-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.45;
+            margin-bottom: 18px;
+            min-height: 42px;
+        }
+
+        .session-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            margin-bottom: 18px;
+        }
+
+        .badge-active {
+            background: rgba(16, 185, 129, 0.18);
+            color: var(--green);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+
+        .badge-inactive {
+            background: rgba(148, 163, 184, 0.12);
+            color: var(--text-muted);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+        }
+
+        .card-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: 1px solid black;
+            border-radius: 7px;
+            box-shadow: var(--btn-shadow);
+            padding: 10px 16px;
+            font-family: 'Overlock', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+            transition: transform 0.1s, opacity 0.15s;
+        }
+
+        .btn:hover {
+            opacity: 0.92;
+        }
+
+        .btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-success {
+            background-color: #10b981;
+        }
+
+        .btn-launch-all {
+            background: linear-gradient(135deg, #7B68EE, #3b82f6);
+            color: white;
+            padding: 11px 20px;
+            font-size: 1rem;
+        }
+
+        /* Credentials Helper */
+        .creds-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 30px;
+        }
+
+        .creds-title {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .creds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.88rem;
+        }
+
+        .cred-item {
+            background-color: var(--bg-input);
+            padding: 10px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .cred-item strong {
+            color: var(--primary);
+        }
+
+        .footer-nav {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .footer-nav a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin: 0 12px;
+        }
+
+        .footer-nav a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>myRide@BIT</h1>
+        <p>Campus Shuttle Transit System — Unified Role & Multi-Session Portal Hub</p>
+    </div>
+
+    <div class="container">
+
+        <!-- Peer Demonstration Quick Start Banner -->
+        <div class="demo-banner">
+            <div>
+                <div class="demo-banner-title">
+                    <span>⚡</span> Peer Demonstration Quick Start
+                </div>
+                <div class="demo-banner-subtitle">
+                    Authenticate all 3 roles simultaneously and open side-by-side browser tabs in 1 click.
+                </div>
+            </div>
+            <div class="demo-actions">
+                <a href="/auth/demo-login?role=all" class="btn btn-success" title="Pre-authenticate Admin, Driver, and Student sessions">
+                    ✓ Authenticate All 3 Roles
+                </a>
+                <button type="button" class="btn btn-launch-all" onclick="launchAllTabs()">
+                    🚀 Open All 3 Portals in Tabs
+                </button>
+            </div>
+        </div>
+
+        <!-- Role Portals Grid -->
+        <div class="grid">
+
+            <!-- 1. Admin Portal -->
+            <div class="portal-card">
+                <div>
+                    <div class="portal-icon">🛡️</div>
+                    <h2 class="portal-title">Administrator</h2>
+                    <p class="portal-desc">Fleet tracking, driver assignments, dynamic dispatching, and campus analytics.</p>
+                    
+                    {% if admin_user %}
+                    <div class="session-badge badge-active">
+                        ● Active: {{ admin_user.full_name }} ({{ admin_user.username }})
+                    </div>
+                    {% else %}
+                    <div class="session-badge badge-inactive">
+                        ○ Not signed in
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="card-buttons">
+                    {% if admin_user %}
+                    <a href="/admin" target="_blank" class="btn">Open Admin Dashboard ↗</a>
+                    <a href="/logout?role=admin" class="btn btn-outline" style="font-size:0.85rem; padding:6px;">Logout Admin Session</a>
+                    {% else %}
+                    <a href="/login/admin" class="btn">Login as Admin &rarr;</a>
+                    <a href="/auth/demo-login?role=admin" class="btn btn-outline">Instant Demo Login (admin)</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 2. Driver Portal -->
+            <div class="portal-card">
+                <div>
+                    <div class="portal-icon">🚌</div>
+                    <h2 class="portal-title">Shuttle Driver</h2>
+                    <p class="portal-desc">Assigned EV bus status, live route guidance, and student pickup acknowledgment.</p>
+                    
+                    {% if driver_user %}
+                    <div class="session-badge badge-active">
+                        ● Active: {{ driver_user.full_name }} ({{ driver_user.username }})
+                    </div>
+                    {% else %}
+                    <div class="session-badge badge-inactive">
+                        ○ Not signed in
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="card-buttons">
+                    {% if driver_user %}
+                    <a href="/driver" target="_blank" class="btn">Open Driver Dashboard ↗</a>
+                    <a href="/logout?role=driver" class="btn btn-outline" style="font-size:0.85rem; padding:6px;">Logout Driver Session</a>
+                    {% else %}
+                    <a href="/login/driver" class="btn">Login as Driver &rarr;</a>
+                    <a href="/auth/demo-login?role=driver" class="btn btn-outline">Instant Demo Login (driver1)</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 3. Student Portal -->
+            <div class="portal-card">
+                <div>
+                    <div class="portal-icon">🎓</div>
+                    <h2 class="portal-title">Student Passenger</h2>
+                    <p class="portal-desc">Request on-demand campus pickups, track assigned shuttle ETA, and view trip status.</p>
+                    
+                    {% if student_user %}
+                    <div class="session-badge badge-active">
+                        ● Active: {{ student_user.full_name }} ({{ student_user.username }})
+                    </div>
+                    {% else %}
+                    <div class="session-badge badge-inactive">
+                        ○ Not signed in
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="card-buttons">
+                    {% if student_user %}
+                    <a href="/student" target="_blank" class="btn">Open Student Dashboard ↗</a>
+                    <a href="/logout?role=student" class="btn btn-outline" style="font-size:0.85rem; padding:6px;">Logout Student Session</a>
+                    {% else %}
+                    <a href="/login/student" class="btn">Login as Student &rarr;</a>
+                    <a href="/auth/demo-login?role=student" class="btn btn-outline">Instant Demo Login (student1)</a>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Demonstration Credentials Cheat Sheet -->
+        <div class="creds-card">
+            <h3 class="creds-title">🔑 Demonstration Credentials Reference</h3>
+            <div class="creds-grid">
+                <div class="cred-item">
+                    <div><strong>Admin:</strong> <code>admin</code></div>
+                    <div style="color:var(--text-muted); margin-top:3px;">Password: <code>admin123</code></div>
+                </div>
+                <div class="cred-item">
+                    <div><strong>Driver 1:</strong> <code>driver1</code></div>
+                    <div style="color:var(--text-muted); margin-top:3px;">Password: <code>driver123</code></div>
+                </div>
+                <div class="cred-item">
+                    <div><strong>Student 1:</strong> <code>student1</code></div>
+                    <div style="color:var(--text-muted); margin-top:3px;">Password: <code>student123</code></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="footer-nav">
+            <a href="/" target="_blank">🗺️ Open Live Campus Map</a>
+            <a href="/about" target="_blank">ℹ️ About System Architecture</a>
+        </div>
+
+    </div>
+
+    <script>
+        function launchAllTabs() {
+            // Ensure sessions are primed then launch individual dashboard tabs
+            fetch('/auth/demo-login?role=all').then(() => {
+                window.open('/admin', '_blank');
+                window.open('/driver', '_blank');
+                window.open('/student', '_blank');
+            }).catch(() => {
+                window.open('/admin', '_blank');
+                window.open('/driver', '_blank');
+                window.open('/student', '_blank');
+            });
+        }
+    </script>
+</body>
+</html>

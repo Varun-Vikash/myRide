@@ -139,12 +139,14 @@
             <input type="password" id="password" name="password" class="form-control" required placeholder="Enter password">
         </div>
         
-        <button type="submit" class="btn-login">Login</button>
+        <button type="submit" class="btn-login">Login as Student</button>
+        <button type="button" class="btn-login" style="background:#282b37; border:1px solid #7B68EE; color:#cbd5e1; margin-top:8px; font-size:0.95rem;" onclick="document.getElementById('username').value='student1'; document.getElementById('password').value='student123';">⚡ Fill Demo Credentials (student1 / student123)</button>
     </form>
     
     <div class="footer-links">
-        <a href="/login/admin">🛡️ Admin Portal</a> | 
-        <a href="/login/driver">🚌 Driver Portal</a>
+        <a href="/login/admin" target="_blank">🛡️ Admin Portal ↗</a> | 
+        <a href="/login/driver" target="_blank">🚌 Driver Portal ↗</a> | 
+        <a href="/login">🔑 Portal Hub</a>
     </div>
 </div>
 

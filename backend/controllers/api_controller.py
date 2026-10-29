@@ -306,10 +306,13 @@ def get_role_user(required_role):
     from flask import session
     uid = session.get(f'{required_role}_user_id')
     if uid:
-        u = User.query.get(int(uid))
-        if u and u.role == required_role:
-            return u
-    if current_user.is_authenticated and current_user.role == required_role:
+        try:
+            u = User.query.get(int(uid))
+            if u and u.role == required_role:
+                return u
+        except Exception:
+            pass
+    if current_user.is_authenticated and getattr(current_user, 'role', None) == required_role:
         return current_user
     return None
 

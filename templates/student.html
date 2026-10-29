@@ -240,8 +240,13 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="brand">myRide@BIT</div>
+        <a href="/" target="_blank" class="brand" style="text-decoration:none;" title="Open Campus Live Map">myRide@BIT</a>
         <div class="title">🎓 Student Dashboard</div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <a href="/admin" target="_blank" class="btn" style="background:#282b37; border-color:#363842; font-size:13px; padding:6px 12px;" title="Open Admin Dashboard in new tab">🛡️ Admin ↗</a>
+            <a href="/driver" target="_blank" class="btn" style="background:#282b37; border-color:#363842; font-size:13px; padding:6px 12px;" title="Open Driver Dashboard in new tab">🚌 Driver ↗</a>
+            <a href="/login" target="_blank" class="btn" style="background:#282b37; border-color:#363842; font-size:13px; padding:6px 12px;" title="Open Portal Hub">🔑 Hub ↗</a>
+        </div>
         <div class="user-info">
             <span>Welcome, {{ user.full_name }}</span>
             <a href="/logout?role=student" class="btn">Logout</a>

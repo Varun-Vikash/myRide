@@ -598,12 +598,66 @@
     .copy-btn:hover {
       background: var(--btn-purple-hover);
     }
+
+    /* Top Right Portal Quick Launcher */
+    .top-portal-bar {
+      position: fixed;
+      top: 18px;
+      right: 20px;
+      z-index: 215;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .portal-nav-pill {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 7px 13px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-family: 'Overlock', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      box-shadow: var(--shadow-main);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .portal-nav-pill:hover {
+      background: var(--bg-card-hover);
+      border-color: #7B68EE;
+      color: #7B68EE;
+      transform: translateY(-1px);
+    }
+    .portal-nav-pill.hub-pill {
+      background: linear-gradient(135deg, rgba(123, 104, 238, 0.4), rgba(59, 130, 246, 0.4));
+      border-color: rgba(123, 104, 238, 0.7);
+      color: #ffffff;
+    }
+    @media (max-width: 900px) {
+      .top-portal-bar {
+        top: 85px;
+        right: 15px;
+      }
+    }
   </style>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 </head>
 <body>
+
+  <!-- Top Right Portal Quick Launcher -->
+  <div class="top-portal-bar">
+    <a href="/login" target="_blank" class="portal-nav-pill hub-pill" title="Open Unified Portal Hub">🔑 Portals Hub</a>
+    <a href="/admin" target="_blank" class="portal-nav-pill" title="Open Admin Dashboard in new tab">🛡️ Admin</a>
+    <a href="/driver" target="_blank" class="portal-nav-pill" title="Open Driver Dashboard in new tab">🚌 Driver</a>
+    <a href="/student" target="_blank" class="portal-nav-pill" title="Open Student Dashboard in new tab">🎓 Student</a>
+  </div>
 
   <!-- Floating Search Bar -->
   <div class="search-bar">
