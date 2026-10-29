@@ -17,6 +17,58 @@
   -webkit-user-drag: none;
   pointer-events: none;
 }
+.visible {
+  display: block !important;
+}
+.invisible {
+  display: none !important;
+}
+
+/* Map Style Bar (Normal / Satellite / Dark) */
+.map-style-bar {
+  position: fixed;
+  left: 30px;
+  bottom: 95px;
+  z-index: 104;
+  display: flex;
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 4px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  gap: 4px;
+  transition: bottom 0.5s ease;
+}
+.style-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  font-family: 'Inter', sans-serif;
+}
+.style-btn:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+}
+.style-btn.active {
+  background: var(--btn-purple);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(106, 96, 221, 0.4);
+}
+.style-btn .btn-icon {
+  font-size: 0.95rem;
+}
 
 /* Route SVG polyline overlay */
 .route-svg-overlay {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <title>myRide@BIT — Campus Navigation & Shuttle Bus Tracking</title>
@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
   
   <!-- myRide@BIT Core Stylesheet -->
-  <link rel="stylesheet" href="/static/css/style.css?v=20261029">
+  <link rel="stylesheet" href="/static/css/style.css?v=20261029_normalmap">
 
   <style>
     /* ============================================================
@@ -66,9 +66,9 @@
       --btn-shadow: 0 0 10px #474A56;
       --map-filter: none;
       --map-sat-filter: none;
-      --tag-color: #ffffff;
-      --tag-shadow: 0 0 2px black, 0 0 2px black, 0 0 2px black;
-      --tag-hover: #ffeaa7;
+      --tag-color: #0f172a;
+      --tag-shadow: 0 0 3px #ffffff, 0 0 4px #ffffff, 0 0 6px #ffffff, 0 1px 2px rgba(0,0,0,0.3);
+      --tag-hover: #4338ca;
       --drawer-bg: #ffffff;
       --drawer-border: #1e293b;
       --widget-bg: rgba(255, 255, 255, 0.96);
@@ -140,6 +140,12 @@
     }
     .bg-map img.the-map[src*="Map.webp"] {
       filter: var(--map-sat-filter);
+    }
+    .visible {
+      display: block !important;
+    }
+    .invisible {
+      display: none !important;
     }
 
     /* Map Layer Containers */
@@ -675,7 +681,7 @@
   <!-- Map Canvas Viewport with Centered Stage -->
   <div class="bg-map" id="map-canvas">
     <div class="map-stage" id="map-stage" data-zoom="4">
-      <img src="/assets/images/Map-dark.svg" id="svg-map-img" height="3876" width="3420" class="the-map visible" oncontextmenu="return false;" alt="SVG map">
+      <img src="/assets/images/Map.svg" id="svg-map-img" height="3876" width="3420" class="the-map visible" oncontextmenu="return false;" alt="Normal Campus Map">
       <img src="/assets/images/Map.webp" id="sat-map-img" height="3876" width="3420" class="the-map invisible" oncontextmenu="return false;" alt="Satellite Map">
       
       <!-- Route Polyline SVG Overlay -->
@@ -742,6 +748,19 @@
         <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
         <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
       </svg>
+    </button>
+  </div>
+
+  <!-- Map Style Controls (Normal / Satellite / Dark) -->
+  <div class="map-style-bar">
+    <button class="style-btn active" id="style-btn-normal" data-style="normal" title="Normal Campus Map">
+      <span class="btn-icon">🗺️</span> <span class="btn-text">Normal</span>
+    </button>
+    <button class="style-btn" id="style-btn-sat" data-style="satellite" title="Satellite Aerial Map">
+      <span class="btn-icon">🛰️</span> <span class="btn-text">Satellite</span>
+    </button>
+    <button class="style-btn" id="style-btn-dark" data-style="dark" title="Dark Nocturnal Mode">
+      <span class="btn-icon">🌙</span> <span class="btn-text">Dark</span>
     </button>
   </div>
 
@@ -823,7 +842,7 @@
 
   <!-- Scripts -->
   <script src="/static/js/api.js?v=20261029"></script>
-  <script src="/static/js/map.js?v=20261029"></script>
+  <script src="/static/js/map.js?v=20261029_normalmap"></script>
   <script src="/static/js/search.js?v=20261029"></script>
   <script src="/static/js/simulation.js?v=20261029"></script>
   <script src="/static/js/dashboard.js?v=20261029"></script>

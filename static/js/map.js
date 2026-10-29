@@ -424,26 +424,53 @@ const MapEngine = {
     element.innerHTML = html.join('');
   },
 
-  // --- THEME MANAGEMENT (DARK MODE PRIMARY) ---
+  // --- MAP STYLE & THEME MANAGEMENT ---
   initTheme() {
-    const saved = localStorage.getItem('geobits-theme') || 'dark';
-    this.setTheme(saved);
+    const savedStyle = localStorage.getItem('geobits-style') || localStorage.getItem('geobits-theme') || 'normal';
+    this.setMapStyle(savedStyle);
+  },
+
+  setMapStyle(style) {
+    const svgMap = $('#svg-map-img');
+    const satMap = $('#sat-map-img');
+
+    if (style === 'satellite') {
+      svgMap.hide().removeClass('visible').addClass('invisible');
+      satMap.show().removeClass('invisible').addClass('visible');
+      $('.style-btn').removeClass('active');
+      $('#style-btn-sat').addClass('active');
+      localStorage.setItem('geobits-style', 'satellite');
+      $('#btn-layer').attr('title', 'Switch to Normal Campus Map');
+    } else if (style === 'dark') {
+      satMap.hide().removeClass('visible').addClass('invisible');
+      svgMap.show().removeClass('invisible').addClass('visible');
+      svgMap.attr('src', '/assets/images/Map-dark.svg');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('geobits-theme', 'dark');
+      localStorage.setItem('geobits-style', 'dark');
+      $('#theme-icon-moon').show();
+      $('#theme-icon-sun').hide();
+      $('.style-btn').removeClass('active');
+      $('#style-btn-dark').addClass('active');
+      $('#btn-layer').attr('title', 'Switch to Satellite Map');
+    } else {
+      // Normal Style Map (Default Light Vector Campus Map)
+      satMap.hide().removeClass('visible').addClass('invisible');
+      svgMap.show().removeClass('invisible').addClass('visible');
+      svgMap.attr('src', '/assets/images/Map.svg');
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('geobits-theme', 'light');
+      localStorage.setItem('geobits-style', 'normal');
+      $('#theme-icon-moon').hide();
+      $('#theme-icon-sun').show();
+      $('.style-btn').removeClass('active');
+      $('#style-btn-normal').addClass('active');
+      $('#btn-layer').attr('title', 'Switch to Satellite Map');
+    }
   },
 
   setTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('geobits-theme', theme);
-    const svgMap = document.getElementById('svg-map-img');
-    if (svgMap) {
-      svgMap.src = theme === 'dark' ? '/assets/images/Map-dark.svg' : '/assets/images/Map.svg';
-    }
-    if (theme === 'dark') {
-      $('#theme-icon-moon').show();
-      $('#theme-icon-sun').hide();
-    } else {
-      $('#theme-icon-moon').hide();
-      $('#theme-icon-sun').show();
-    }
+    this.setMapStyle(theme === 'dark' ? 'dark' : 'normal');
   },
 
   // --- BUTTONS & CONTROLS ---
@@ -453,16 +480,28 @@ const MapEngine = {
     $('#btn-center').click(() => this.centerOnCampus(true));
     $('#btn-widget-center').click(() => this.centerOnCampus(true));
 
+    // Map style pills (Normal / Satellite / Dark)
+    $('#style-btn-normal').click(() => this.setMapStyle('normal'));
+    $('#style-btn-sat').click(() => this.setMapStyle('satellite'));
+    $('#style-btn-dark').click(() => this.setMapStyle('dark'));
+
     // Theme toggle button (Dark / Light)
     $('#btn-theme').click(() => {
-      const current = document.documentElement.getAttribute('data-theme') || 'dark';
-      const next = current === 'dark' ? 'light' : 'dark';
-      this.setTheme(next);
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'dark' ? 'normal' : 'dark';
+      this.setMapStyle(next);
     });
 
     // Layer toggle (SVG / Satellite Map)
     $('#btn-layer').click(() => {
-      $('.bg-map .the-map').toggle();
+      const satMap = $('#sat-map-img');
+      const isSat = satMap.is(':visible') && !satMap.hasClass('invisible');
+      if (isSat) {
+        const theme = document.documentElement.getAttribute('data-theme') || 'light';
+        this.setMapStyle(theme === 'dark' ? 'dark' : 'normal');
+      } else {
+        this.setMapStyle('satellite');
+      }
     });
 
     // Copy URL pin button
