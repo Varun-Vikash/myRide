@@ -170,21 +170,38 @@ const SimulationEngine = {
 
     Object.values(this.routeCache).forEach(r => {
       if (!r.waypoints || !r.waypoints.length) return;
-      // Filter out any perimeter waypoints beyond the physical campus graphic
-      const validWaypoints = r.waypoints.filter(p => p.x <= 2350);
-      const pts = validWaypoints.map(p => `${p.x * scale},${p.y * scale}`).join(' ');
+      const validWaypoints = r.waypoints;
 
-      linesHtml += `
-        <polyline class="route-polyline" points="${pts}" fill="none" stroke="${r.color}" stroke-width="12" stroke-opacity="0.16" stroke-linecap="round" stroke-linejoin="round" />
-        <polyline class="route-polyline" points="${pts}" fill="none" stroke="${r.color}" stroke-width="4.5" stroke-opacity="0.85" stroke-linecap="round" stroke-linejoin="round" />
-        <polyline class="route-polyline" points="${pts}" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="8 6" stroke-opacity="0.8" />
-      `;
+      // Group contiguous segments without rogue jumps (> 500px)
+      const segments = [];
+      let curSeg = [validWaypoints[0]];
+      for (let i = 1; i < validWaypoints.length; i++) {
+        const prev = validWaypoints[i - 1];
+        const cur = validWaypoints[i];
+        const dist = Math.hypot(cur.x - prev.x, cur.y - prev.y);
+        if (dist > 500) {
+          if (curSeg.length > 1) segments.push(curSeg);
+          curSeg = [cur];
+        } else {
+          curSeg.push(cur);
+        }
+      }
+      if (curSeg.length > 1) segments.push(curSeg);
+
+      segments.forEach(seg => {
+        const pts = seg.map(p => `${p.x * scale},${p.y * scale}`).join(' ');
+        linesHtml += `
+          <polyline class="route-polyline" points="${pts}" fill="none" stroke="${r.color}" stroke-width="12" stroke-opacity="0.16" stroke-linecap="round" stroke-linejoin="round" />
+          <polyline class="route-polyline" points="${pts}" fill="none" stroke="${r.color}" stroke-width="4.5" stroke-opacity="0.85" stroke-linecap="round" stroke-linejoin="round" />
+          <polyline class="route-polyline" points="${pts}" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="8 6" stroke-opacity="0.8" />
+        `;
+      });
 
       // Render Stop Markers positioned cleanly at current scale
       if (stopsLayer) {
         r.stops.forEach(st => {
           const wp = validWaypoints.find(w => w.id === st.junction);
-          if (wp && wp.x <= 2350) {
+          if (wp) {
             const dot = document.createElement('div');
             dot.className = `bus-stop-dot stop-dot-${r.route_id}`;
             dot.style.left = `${(wp.x * scale) - 6.5}px`;
@@ -649,20 +666,37 @@ const SimulationEngine = {
     const mission = primaryBus.activeMission;
 
     // Draw active navigation polyline corridor (guarantee valid campus map coordinates)
-    const validWaypoints = (primaryBus.activeWaypoints || []).filter(p => p.x <= 2350);
+    const validWaypoints = primaryBus.activeWaypoints || [];
     if (validWaypoints.length < 2) {
       container.innerHTML = '';
       if (missionPin) missionPin.remove();
       return;
     }
 
-    const pts = validWaypoints.map(p => `${p.x * scale},${p.y * scale}`).join(' ');
-    const corridorColor = mission.phase === 'picked_up' ? '#10b981' : '#a855f7';
+    // Group contiguous segments without rogue jumps (> 500px)
+    const segments = [];
+    let curSeg = [validWaypoints[0]];
+    for (let i = 1; i < validWaypoints.length; i++) {
+      const prev = validWaypoints[i - 1];
+      const cur = validWaypoints[i];
+      const dist = Math.hypot(cur.x - prev.x, cur.y - prev.y);
+      if (dist > 500) {
+        if (curSeg.length > 1) segments.push(curSeg);
+        curSeg = [cur];
+      } else {
+        curSeg.push(cur);
+      }
+    }
+    if (curSeg.length > 1) segments.push(curSeg);
 
-    polylines += `
-      <polyline points="${pts}" fill="none" stroke="${corridorColor}" stroke-width="8" stroke-opacity="0.3" stroke-linecap="round" stroke-linejoin="round" />
-      <polyline class="mission-polyline" points="${pts}" fill="none" stroke="${corridorColor}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
-    `;
+    const corridorColor = mission.phase === 'picked_up' ? '#10b981' : '#a855f7';
+    segments.forEach(seg => {
+      const pts = seg.map(p => `${p.x * scale},${p.y * scale}`).join(' ');
+      polylines += `
+        <polyline points="${pts}" fill="none" stroke="${corridorColor}" stroke-width="8" stroke-opacity="0.3" stroke-linecap="round" stroke-linejoin="round" />
+        <polyline class="mission-polyline" points="${pts}" fill="none" stroke="${corridorColor}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+      `;
+    });
     container.innerHTML = polylines;
 
     // Render / update live student destination/pickup pin
@@ -673,8 +707,7 @@ const SimulationEngine = {
       shuttleLayer.appendChild(missionPin);
     }
 
-    const rawCoord = (mission.phase === 'picked_up') ? mission.dropCoord : mission.pickupCoord;
-    const targetCoord = (rawCoord && rawCoord.x <= 2350) ? rawCoord : null;
+    const targetCoord = (mission.phase === 'picked_up') ? mission.dropCoord : mission.pickupCoord;
     if (targetCoord) {
       missionPin.style.left = `${targetCoord.x * scale}px`;
       missionPin.style.top = `${targetCoord.y * scale}px`;

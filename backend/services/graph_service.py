@@ -42,18 +42,33 @@ class CampusGraphService:
         # Mathematically calibrate coordinates across all zoom levels
         self._calibrate_coordinates()
 
-        # Filter ghost/out-of-bounds eastern perimeter vehicle nodes that lack drawn road geometry on Map-dark.svg
-        out_of_bounds_vehicle_nodes = {65, 66, 71, 72, 73, 74, 75, 78, 79, 80}
+        # Filter ghost/out-of-bounds nodes & non-road shortcut edges
+        out_of_bounds_vehicle_nodes = {65, 66, 71, 72, 73, 74, 75, 78, 79, 80, 12, 13, 63}
         raw_v_junctions = extract_ruby_json(os.path.join(LIB_ASSETS_DIR, 'vehicle_junction_points.rb')) or []
-        self.vehicle_junctions = [j for j in raw_v_junctions if j.get('id') not in out_of_bounds_vehicle_nodes and j.get('left', 0) <= 2300]
-        
+        self.vehicle_junctions = [
+            j for j in raw_v_junctions 
+            if j.get('id') not in out_of_bounds_vehicle_nodes and j.get('left', 0) <= 2300
+        ]
+        self.vehicle_junction_dict = {j['id']: j for j in self.vehicle_junctions}
+
+        # Remove ghost edges that lack physical roads (cuts across fields/buildings or dead ends)
+        ghost_edge_pairs = [{11, 12}, {12, 144}, {12, 13}, {63, 62}]
         raw_v_edges = extract_ruby_json(os.path.join(LIB_ASSETS_DIR, 'vehicle_edges.rb')) or []
-        self.vehicle_edges = [e for e in raw_v_edges if e[0] not in out_of_bounds_vehicle_nodes and e[1] not in out_of_bounds_vehicle_nodes]
+        self.vehicle_edges = []
+        for e in raw_v_edges:
+            u, v = e[0], e[1]
+            if u in out_of_bounds_vehicle_nodes or v in out_of_bounds_vehicle_nodes:
+                continue
+            if set(e[:2]) in ghost_edge_pairs:
+                continue
+            if u in self.vehicle_junction_dict and v in self.vehicle_junction_dict:
+                ju = self.vehicle_junction_dict[u]
+                jv = self.vehicle_junction_dict[v]
+                real_w = math.hypot(ju['left'] - jv['left'], ju['top'] - jv['top'])
+                self.vehicle_edges.append((u, v, real_w))
 
         self.ped_junctions = extract_ruby_json(os.path.join(LIB_ASSETS_DIR, 'junction_points.rb')) or []
         self.ped_edges = extract_ruby_json(os.path.join(LIB_ASSETS_DIR, 'edges.rb')) or []
-
-        self.vehicle_junction_dict = {j['id']: j for j in self.vehicle_junctions}
         self.ped_junction_dict = {j['id']: j for j in self.ped_junctions}
 
         self.vehicle_graph = self._build_adj(self.vehicle_edges)

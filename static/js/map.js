@@ -391,11 +391,13 @@ const MapEngine = {
     const element = document.querySelector(".tags");
     if (!element) return;
     
+    // Proportion text cleanly across zoom levels
+    const fontSize = num === 1 ? '0.70rem' : (num === 2 ? '0.78rem' : (num === 3 ? '0.86rem' : '0.94rem'));
     const items = (data.tags || []);
     const html = [];
     for (let i = 0; i < items.length; i++) {
       const tag = items[i];
-      html.push(`<div class='tag' onclick='SearchEngine.openPlaceDetails("${tag.id}")' id='${tag.id}' style='top: ${tag.top}; left: ${tag.left};'>${tag.name}</div>`);
+      html.push(`<div class='tag' onclick='SearchEngine.openPlaceDetails("${tag.id}")' id='${tag.id}' style='top: ${tag.top}; left: ${tag.left}; font-size: ${fontSize};'>${tag.name}</div>`);
     }
     element.innerHTML = html.join('');
   },
@@ -412,6 +414,8 @@ const MapEngine = {
     const element = document.querySelector(".legends");
     if (!element) return;
 
+    // Proportion icon dimensions cleanly across zoom levels (compact overview -> full detail)
+    const iconDim = num === 1 ? 20 : (num === 2 ? 24 : (num === 3 ? 28 : 32));
     const html = [];
     for (let i = 0; i < list.length; i++) {
       const legend = list[i];
@@ -419,7 +423,7 @@ const MapEngine = {
         .replace(/-icon(-\d+)?$/i, '')
         .replace(/-/g, ' ')
         .replace(/\b\w/g, c => c.toUpperCase());
-      html.push(`<img src='${legend.link}' class='legend' id='${legend.id}' title='${cleanTitle}' style='top: ${legend.top}; left: ${legend.left};' alt='${cleanTitle}' loading='lazy'>`);
+      html.push(`<img src='${legend.link}' class='legend' id='${legend.id}' title='${cleanTitle}' style='top: ${legend.top}; left: ${legend.left}; width: ${iconDim}px; height: ${iconDim}px;' alt='${cleanTitle}' loading='lazy'>`);
     }
     element.innerHTML = html.join('');
   },
