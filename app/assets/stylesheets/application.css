@@ -123,11 +123,6 @@ body{
     z-index: 103;
 }
 
-#main-parking{
-    top: 1050px;
-    left: 1950px;
-}
-
 #map-icon{
     background-color: lightgreen;
 }

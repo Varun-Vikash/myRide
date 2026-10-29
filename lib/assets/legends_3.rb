@@ -1,188 +1,178 @@
 def place_legends
-  [
-    {
-      id: "library-icon-1",
-      link: ActionController::Base.helpers.image_path("library.svg"),
-      top: "1828px",
-      left: "930px"
-    },
-    {
-      id: "library-icon-2",
-      link: ActionController::Base.helpers.image_path("library.svg"),
-      top: "1470px",
-      left: "1340px"
-    },
-    {
-      id: "food-icon-1",
-      link: ActionController::Base.helpers.image_path("food.svg"),
-      top: "2000px",
-      left: "1065px"
-    },
-    {
-      id: "food-icon-2",
-      link: ActionController::Base.helpers.image_path("food.svg"),
-      top: "1828px",
-      left: "1647px"
-    },
-    {
-      id: "food-icon-3",
-      link: ActionController::Base.helpers.image_path("food.svg"),
-      top: "2290px",
-      left: "645px"
-    },
-    {
-      id: "sapphire-icon",
-      link: ActionController::Base.helpers.image_path("hostel.svg"),
-      top: "2060px",
-      left: "1480px"
-    },
-    {
-      id: "ruby-icon",
-      link: ActionController::Base.helpers.image_path("hostel.svg"),
-      top: "2080px",
-      left: "1835px"
-    },
-    {
-      id: "pearl-icon",
-      link: ActionController::Base.helpers.image_path("hostel.svg"),
-      top: "2227px",
-      left: "1874px"
-    },
-    {
-      id: "diamond-icon",
-      link: ActionController::Base.helpers.image_path("hostel.svg"),
-      top: "1550px",
-      left: "1780px"
-    },
-    {
-      id: "emerald-icon",
-      link: ActionController::Base.helpers.image_path("hostel.svg"),
-      top: "1619px",
-      left: "1455px"
-    },
-    {
-      id: "coral-icon",
-      link: ActionController::Base.helpers.image_path("hostel.svg"),
-      top: "1720px",
-      left: "1300px"
-    },
-    {
-      id: "narmadha-icon",
-      link: ActionController::Base.helpers.image_path("hostel.svg"),
-      top: "2130px",
-      left: "330px"
-    },
-    {
-      id: "ganga-icon",
-      link: ActionController::Base.helpers.image_path("hostel.svg"),
-      top: "2125px",
-      left: "475px"
-    },
-    {
-      id: "kaveri-icon",
-      link: ActionController::Base.helpers.image_path("hostel.svg"),
-      top: "2245px",
-      left: "445px"
-    },
-    {
-      id: "bhavani-icon",
-      link: ActionController::Base.helpers.image_path("hostel.svg"),
-      top: "2265px",
-      left: "840px"
-    },
-    {
-      id: "yamuna-icon",
-      link: ActionController::Base.helpers.image_path("hostel.svg"),
-      top: "2080px",
-      left: "763px"
-    },
-    {
-      id: "snack-icon-1",
-      link: ActionController::Base.helpers.image_path("snacks.svg"),
-      top: "1955px",
-      left: "970px"
-    },
-    {
-      id: "snack-icon-2",
-      link: ActionController::Base.helpers.image_path("snacks.svg"),
-      top: "1961px",
-      left: "487px"
-    },
-    {
-      id: "snack-icon-3",
-      link: ActionController::Base.helpers.image_path("snacks.svg"),
-      top: "1940px",
-      left: "1375px"
-    },
-    {
-      id: "gym-icon",
-      link: ActionController::Base.helpers.image_path("gym.svg"),
-      top: "1785px",
-      left: "1310px"
-    },
-    {
-      id: "medical-icon",
-      link: ActionController::Base.helpers.image_path("medical.svg"),
-      top: "1930px",
-      left: "345px"
-    },
-    {
-      id: "parking-icon-1",
-      link: ActionController::Base.helpers.image_path("parking.svg"),
-      top: "1762px",
-      left: "515px"
-    },
-    {
-      id: "parking-icon-2",
-      link: ActionController::Base.helpers.image_path("parking.svg"),
-      top: "665px",
-      left: "1320px"
-    },
-    {
-      id: "office-icon",
-      link: ActionController::Base.helpers.image_path("office.svg"),
-      top: "1045px",
-      left: "1305px"
-    },
-    {
-      id: "xerox-icon-1",
-      link: ActionController::Base.helpers.image_path("xerox.svg"),
-      top: "1620px",
-      left: "840px"
-    },
-    {
-      id: "xerox-icon-2",
-      link: ActionController::Base.helpers.image_path("xerox.svg"),
-      top: "1210px",
-      left: "1055px"
-    },
-    {
-      id: "xerox-icon-3",
-      link: ActionController::Base.helpers.image_path("xerox.svg"),
-      top: "1437px",
-      left: "1376px"
-    },
-    {
-      id: "football-icon",
-      link: ActionController::Base.helpers.image_path("football.svg"),
-      top: "1176px",
-      left: "410px"
-    },
-    {
-      id: "cricket-icon",
-      link: ActionController::Base.helpers.image_path("cricket.svg"),
-      top: "1550px",
-      left: "415px"
-    },
-
-  ]
+[
+  {
+    "id": "library-icon-1",
+    "link": "/assets/images/library.svg",
+    "left": "940px",
+    "top": "1837px"
+  },
+  {
+    "id": "library-icon-2",
+    "link": "/assets/images/library.svg",
+    "left": "1333px",
+    "top": "1477px"
+  },
+  {
+    "id": "food-icon-1",
+    "link": "/assets/images/food.svg",
+    "left": "1607px",
+    "top": "1837px"
+  },
+  {
+    "id": "food-icon-2",
+    "link": "/assets/images/food.svg",
+    "left": "650px",
+    "top": "2267px"
+  },
+  {
+    "id": "food-icon-3",
+    "link": "/assets/images/food.svg",
+    "left": "1103px",
+    "top": "1987px"
+  },
+  {
+    "id": "sapphire-icon",
+    "link": "/assets/images/hostel.svg",
+    "left": "1517px",
+    "top": "2087px"
+  },
+  {
+    "id": "ruby-icon",
+    "link": "/assets/images/hostel.svg",
+    "left": "1850px",
+    "top": "2093px"
+  },
+  {
+    "id": "pearl-icon",
+    "link": "/assets/images/hostel.svg",
+    "left": "1890px",
+    "top": "2223px"
+  },
+  {
+    "id": "diamond-icon",
+    "link": "/assets/images/hostel.svg",
+    "left": "1767px",
+    "top": "1570px"
+  },
+  {
+    "id": "emerald-icon",
+    "link": "/assets/images/hostel.svg",
+    "left": "1497px",
+    "top": "1603px"
+  },
+  {
+    "id": "coral-icon",
+    "link": "/assets/images/hostel.svg",
+    "left": "1315px",
+    "top": "1730px"
+  },
+  {
+    "id": "narmadha-icon",
+    "link": "/assets/images/hostel.svg",
+    "left": "337px",
+    "top": "2133px"
+  },
+  {
+    "id": "ganga-icon",
+    "link": "/assets/images/hostel.svg",
+    "left": "493px",
+    "top": "2127px"
+  },
+  {
+    "id": "kaveri-icon",
+    "link": "/assets/images/hostel.svg",
+    "left": "423px",
+    "top": "2257px"
+  },
+  {
+    "id": "bhavani-icon",
+    "link": "/assets/images/hostel.svg",
+    "left": "843px",
+    "top": "2313px"
+  },
+  {
+    "id": "yamuna-icon",
+    "link": "/assets/images/hostel.svg",
+    "left": "787px",
+    "top": "2100px"
+  },
+  {
+    "id": "snack-icon-1",
+    "link": "/assets/images/snacks.svg",
+    "left": "973px",
+    "top": "1960px"
+  },
+  {
+    "id": "snack-icon-2",
+    "link": "/assets/images/snacks.svg",
+    "left": "1000px",
+    "top": "1200px"
+  },
+  {
+    "id": "snack-icon-3",
+    "link": "/assets/images/snacks.svg",
+    "left": "840px",
+    "top": "820px"
+  },
+  {
+    "id": "gym-icon",
+    "link": "/assets/images/gym.svg",
+    "left": "1323px",
+    "top": "1790px"
+  },
+  {
+    "id": "medical-icon",
+    "link": "/assets/images/medical.svg",
+    "left": "317px",
+    "top": "1923px"
+  },
+  {
+    "id": "parking-icon-1",
+    "link": "/assets/images/parking.svg",
+    "left": "530px",
+    "top": "1823px"
+  },
+  {
+    "id": "parking-icon-2",
+    "link": "/assets/images/parking.svg",
+    "left": "1333px",
+    "top": "680px"
+  },
+  {
+    "id": "office-icon",
+    "link": "/assets/images/office.svg",
+    "left": "1317px",
+    "top": "1057px"
+  },
+  {
+    "id": "xerox-icon-1",
+    "link": "/assets/images/xerox.svg",
+    "left": "850px",
+    "top": "1630px"
+  },
+  {
+    "id": "xerox-icon-2",
+    "link": "/assets/images/xerox.svg",
+    "left": "1393px",
+    "top": "1437px"
+  },
+  {
+    "id": "xerox-icon-3",
+    "link": "/assets/images/xerox.svg",
+    "left": "1067px",
+    "top": "1207px"
+  },
+  {
+    "id": "football-icon",
+    "link": "/assets/images/football.svg",
+    "left": "410px",
+    "top": "1153px"
+  },
+  {
+    "id": "cricket-icon",
+    "link": "/assets/images/cricket.svg",
+    "left": "437px",
+    "top": "1557px"
+  }
+]
 end
-
-=begin
-      {
-       id: "",
-       link: ActionController::Base.helpers.image_path(".svg"),
-       top: "px",
-       left: "px"
-      },
-=end

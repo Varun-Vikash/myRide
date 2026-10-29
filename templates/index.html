@@ -16,8 +16,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
   
   <!-- myRide@BIT Core Stylesheet -->
-  <link rel="stylesheet" href="/assets/stylesheets/application.css">
-  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/style.css?v=20261029">
 
   <style>
     /* ============================================================
@@ -120,6 +119,7 @@
       height: 3876px;
       margin: auto;
       flex-shrink: 0;
+      overflow: hidden;
     }
 
     /* Prevent browser native image ghost-drag & Apply Dark Map Filter */
@@ -127,6 +127,9 @@
       position: absolute;
       top: 0;
       left: 0;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: fill;
       user-select: none;
       -webkit-user-drag: none;
       pointer-events: none;
@@ -765,11 +768,11 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js"></script>
-  <script src="/static/js/map.js"></script>
-  <script src="/static/js/search.js"></script>
-  <script src="/static/js/simulation.js"></script>
-  <script src="/static/js/dashboard.js"></script>
-  <script src="/static/js/main.js"></script>
+  <script src="/static/js/api.js?v=20261029"></script>
+  <script src="/static/js/map.js?v=20261029"></script>
+  <script src="/static/js/search.js?v=20261029"></script>
+  <script src="/static/js/simulation.js?v=20261029"></script>
+  <script src="/static/js/dashboard.js?v=20261029"></script>
+  <script src="/static/js/main.js?v=20261029"></script>
 </body>
 </html>

@@ -65,6 +65,8 @@ const SearchEngine = {
       bgMap.scrollLeft = leftPx - window.innerWidth / 2;
 
       const pin = $('#pin');
+      MapEngine.pinBaseX = leftPx;
+      MapEngine.pinBaseY = topPx;
       pin.css({
         "left": `${leftPx - 16}px`,
         "top": `${topPx - 36}px`,

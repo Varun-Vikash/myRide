@@ -4,8 +4,13 @@ const MapEngine = {
   baseHeight: 3876,
   viewport: null,
   stage: null,
+  tagCache: {},
+  legendCache: {},
+  _currentZoomRequestId: 0,
+  pinBaseX: null,
+  pinBaseY: null,
 
-  init() {
+  async init() {
     this.viewport = document.querySelector('.bg-map');
     this.stage = document.getElementById('map-stage') || this.viewport;
     
@@ -17,7 +22,10 @@ const MapEngine = {
     const customX = parseInt(params.get('left')) || 1750;
     const customY = parseInt(params.get('top')) || 1950;
 
-    this.setZoom(lvl);
+    // Prefetch all zoom levels in background for instant, race-free zooming
+    this.prefetchData();
+
+    await this.setZoom(lvl);
 
     // Reliable Multi-Phase Centering (prevents left-corner browser clamping)
     const doCenter = () => {
@@ -52,6 +60,21 @@ const MapEngine = {
     this.bindMovements();
     this.bindControls();
     this.bindInstructionBox();
+  },
+
+  async prefetchData() {
+    [1, 2, 3, 4].forEach(async (lvl) => {
+      try {
+        if (!this.tagCache[lvl]) {
+          this.tagCache[lvl] = await API.getTags(lvl);
+        }
+        if (!this.legendCache[lvl]) {
+          this.legendCache[lvl] = await API.getLegends(lvl);
+        }
+      } catch (err) {
+        console.warn(`Prefetch error for level ${lvl}:`, err);
+      }
+    });
   },
 
   getScaleFactor() {
@@ -253,6 +276,10 @@ const MapEngine = {
   },
 
   dropPin(stageX, stageY) {
+    const scale = this.getScaleFactor();
+    this.pinBaseX = stageX / scale;
+    this.pinBaseY = stageY / scale;
+
     const pin = $('#pin');
     const urlBox = $('#url-box');
     const urlInput = $('#pin-url');
@@ -267,6 +294,22 @@ const MapEngine = {
       transform: 'translateX(-50%)'
     }).show();
     $('#btn-copy-pin').text('Copy');
+  },
+
+  updatePinScale() {
+    const pin = $('#pin');
+    if (!pin.is(':visible') || this.pinBaseX == null) return;
+    const scale = this.getScaleFactor();
+    const curX = this.pinBaseX * scale;
+    const curY = this.pinBaseY * scale;
+    pin.css({
+      left: `${curX - 16}px`,
+      top: `${curY - 36}px`
+    });
+    $('#url-box').css({
+      left: `${curX}px`,
+      top: `${curY + 4}px`
+    });
   },
 
   // --- ZOOM CONTROLS (PRESERVES VIEWPORT CENTER) ---
@@ -293,6 +336,7 @@ const MapEngine = {
   async setZoom(lvl) {
     if (lvl < 1 || lvl > 4) return;
     this.zoomLevel = lvl;
+    const reqId = ++this._currentZoomRequestId;
 
     let w = this.baseWidth;
     let h = this.baseHeight;
@@ -313,44 +357,71 @@ const MapEngine = {
     document.querySelectorAll(".bg-map .the-map").forEach(img => {
       img.width = w;
       img.height = h;
+      img.style.width = `${w}px`;
+      img.style.height = `${h}px`;
     });
 
     const svg = document.getElementById('route-svg');
     if (svg) {
       svg.setAttribute('width', w);
       svg.setAttribute('height', h);
+      svg.style.width = `${w}px`;
+      svg.style.height = `${h}px`;
     }
 
-    await this.renderTags(lvl);
-    await this.renderLegends(lvl);
+    this.updatePinScale();
+
+    await this.renderTags(lvl, reqId);
+    await this.renderLegends(lvl, reqId);
 
     if (window.SimulationEngine) {
       SimulationEngine.drawRouteOverlays();
     }
   },
 
-  async renderTags(num) {
-    const data = await API.getTags(num);
+  async renderTags(num, reqId) {
+    let data = this.tagCache[num];
+    if (!data) {
+      data = await API.getTags(num);
+      this.tagCache[num] = data;
+    }
+    // Reject stale out-of-order renders
+    if (reqId && reqId !== this._currentZoomRequestId) return;
+
     const element = document.querySelector(".tags");
     if (!element) return;
-    element.innerHTML = "";
-    (data.tags || []).forEach(tag => {
-      element.innerHTML += `<div class='tag' onclick='SearchEngine.openPlaceDetails("${tag.id}")' id='${tag.id}' style='top: ${tag.top}; left: ${tag.left};'>${tag.name}</div>`;
-    });
+    
+    const items = (data.tags || []);
+    const html = [];
+    for (let i = 0; i < items.length; i++) {
+      const tag = items[i];
+      html.push(`<div class='tag' onclick='SearchEngine.openPlaceDetails("${tag.id}")' id='${tag.id}' style='top: ${tag.top}; left: ${tag.left};'>${tag.name}</div>`);
+    }
+    element.innerHTML = html.join('');
   },
 
-  async renderLegends(num) {
-    const list = await API.getLegends(num);
+  async renderLegends(num, reqId) {
+    let list = this.legendCache[num];
+    if (!list) {
+      list = await API.getLegends(num);
+      this.legendCache[num] = list;
+    }
+    // Reject stale out-of-order renders
+    if (reqId && reqId !== this._currentZoomRequestId) return;
+
     const element = document.querySelector(".legends");
     if (!element) return;
-    element.innerHTML = "";
-    (list || []).forEach(legend => {
+
+    const html = [];
+    for (let i = 0; i < list.length; i++) {
+      const legend = list[i];
       const cleanTitle = (legend.id || 'Amenity')
         .replace(/-icon(-\d+)?$/i, '')
         .replace(/-/g, ' ')
         .replace(/\b\w/g, c => c.toUpperCase());
-      element.innerHTML += `<img src='${legend.link}' class='legend' id='${legend.id}' title='${cleanTitle}' style='top: ${legend.top}; left: ${legend.left};' alt='${cleanTitle}' loading='lazy'>`;
-    });
+      html.push(`<img src='${legend.link}' class='legend' id='${legend.id}' title='${cleanTitle}' style='top: ${legend.top}; left: ${legend.left};' alt='${cleanTitle}' loading='lazy'>`);
+    }
+    element.innerHTML = html.join('');
   },
 
   // --- THEME MANAGEMENT (DARK MODE PRIMARY) ---

@@ -1,153 +1,144 @@
 def place_tags
-  {
-    "tags": [
-      {
-        "id": "sf-block",
-        "name": "Sunflower Block",
-        "top": "850px",
-        "left": "900px"
-      },
-      {
-        "id": "as-main-left",
-        "name": "AS Block",
-        "top": "990px",
-        "left": "690px"
-      },
-      {
-        "id": "ib-block-2",
-        "name": "IB Block",
-        "top": "990px",
-        "left": "510px"
-      },
-      {
-        "id": "mechanic-back",
-        "name": "Mechanic Block",
-        "top": "950px",
-        "left": "930px"
-      },
-      {
-        "id": "library",
-        "name": "Library",
-        "top": "1205px",
-        "left": "600px"
-      },
-      {
-        "id": "main-auditorium",
-        "name": "Main Auditorium",
-        "top": "1120px",
-        "left": "590px"
-      },
-      {
-        "id": "cafeteria",
-        "name": "Cafeteria",
-        "top": "1355px",
-        "left": "700px"
-      },
-      {
-        "id": "principal-office",
-        "name": "Principal Office",
-        "top": "620px",
-        "left": "870px"
-      },
-      {
-        "id": "coral",
-        "name": "NRI Hostel",
-        "top": "1110px",
-        "left": "860px"
-      },
-      {
-        "id": "boys-hostels",
-        "name": "Boys Hostels",
-        "top": "1400px",
-        "left": "990px"
-      },
-      {
-        "id": "boys-mess",
-        "name": "Boys Mess",
-        "top": "1220px",
-        "left": "1080px"
-      },
-      {
-        "id": "girls-hostels",
-        "name": "Girls Hostels",
-        "top": "1450px",
-        "left": "300px"
-      },
-      {
-        "id": "girls-mess",
-        "name": "Girls Mess",
-        "top": "1500px",
-        "left": "420px"
-      },
-      {
-        "id": "football-ground",
-        "name": "Football Ground",
-        "top": "705px",
-        "left": "250px"
-      },
-      {
-        "id": "cricket-ground",
-        "name": "Cricket Ground",
-        "top": "1000px",
-        "left": "260px"
-      },
-      {
-        "id": "staff-quarters",
-        "name": "Staff Quarters",
-        "top": "390px",
-        "left": "300px"
-      },
-      {
-        "id": "smart-agri-fields",
-        "name": "Smart Agri Fields",
-        "top": "630px",
-        "left": "730px"
-      },
-      {
-        "id": "as-main-right",
-        "name": "Special Labs",
-        "top": "800px",
-        "left": "690px"
-      },
-      {
-        "id": "medical-centre",
-        "name": "Medical Centre",
-        "top": "1300px",
-        "left": "190px"
-      },
-      {
-        "id": "main-parking",
-        "name": "Main Parking Area",
-        "top": "380px",
-        "left": "870px"
-      },
-      {
-        "id": "playground-1",
-        "name": "Empty Playground",
-        "top": "1517px",
-        "left": "690px"
-      },
-      {
-        "id": "guest-house",
-        "name": "BIT Guest House",
-        "top": "245px",
-        "left": "890px"
-      },
-      {
-        "id": "bus",
-        "name": "Day Scholar Buses",
-        "top": "548px",
-        "left": "560px"
-      },
-    ]
-  }
+{
+  "tags": [
+    {
+      "id": "sf-block",
+      "name": "Sunflower Block",
+      "left": "889px",
+      "top": "867px"
+    },
+    {
+      "id": "as-main-left",
+      "name": "AS Block",
+      "left": "658px",
+      "top": "816px"
+    },
+    {
+      "id": "ib-block-2",
+      "name": "IB Block",
+      "left": "469px",
+      "top": "809px"
+    },
+    {
+      "id": "mechanic-back",
+      "name": "Mechanic Block",
+      "left": "1004px",
+      "top": "933px"
+    },
+    {
+      "id": "library",
+      "name": "Library",
+      "left": "620px",
+      "top": "1211px"
+    },
+    {
+      "id": "main-auditorium",
+      "name": "Main Auditorium",
+      "left": "611px",
+      "top": "1138px"
+    },
+    {
+      "id": "cafeteria",
+      "name": "Cafeteria",
+      "left": "713px",
+      "top": "1336px"
+    },
+    {
+      "id": "principal-office",
+      "name": "Principal Office",
+      "left": "884px",
+      "top": "636px"
+    },
+    {
+      "id": "coral",
+      "name": "NRI Hostel",
+      "left": "880px",
+      "top": "1133px"
+    },
+    {
+      "id": "boys-hostels",
+      "name": "Boys Hostels",
+      "left": "888px",
+      "top": "1234px"
+    },
+    {
+      "id": "boys-mess",
+      "name": "Boys Mess",
+      "left": "1104px",
+      "top": "1222px"
+    },
+    {
+      "id": "girls-hostels",
+      "name": "Girls Hostels",
+      "left": "415px",
+      "top": "1250px"
+    },
+    {
+      "id": "girls-mess",
+      "name": "Girls Mess",
+      "left": "429px",
+      "top": "1529px"
+    },
+    {
+      "id": "football-ground",
+      "name": "Football Ground",
+      "left": "264px",
+      "top": "743px"
+    },
+    {
+      "id": "cricket-ground",
+      "name": "Cricket Ground",
+      "left": "283px",
+      "top": "1054px"
+    },
+    {
+      "id": "staff-quarters",
+      "name": "Staff Quarters",
+      "left": "311px",
+      "top": "400px"
+    },
+    {
+      "id": "smart-agri-fields",
+      "name": "Smart Agri Fields",
+      "left": "731px",
+      "top": "636px"
+    },
+    {
+      "id": "as-main-right",
+      "name": "Special Labs",
+      "left": "736px",
+      "top": "800px"
+    },
+    {
+      "id": "medical-centre",
+      "name": "Medical Centre",
+      "left": "209px",
+      "top": "1300px"
+    },
+    {
+      "id": "main-parking",
+      "name": "Main Parking Area",
+      "left": "876px",
+      "top": "429px"
+    },
+    {
+      "id": "playground-1",
+      "name": "Empty Playground",
+      "left": "711px",
+      "top": "1533px"
+    },
+    {
+      "id": "guest-house",
+      "name": "BIT Guest House",
+      "left": "910px",
+      "top": "269px"
+    },
+    {
+      "id": "bus",
+      "name": "Day Scholar Buses",
+      "left": "607px",
+      "top": "551px"
+    }
+  ]
+}
 end
-
-=begin
-     {
-        "id": "",
-        "name": "",
-        "top": "px",
-        "left": "px"
-      },
-=end

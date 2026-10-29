@@ -74,6 +74,14 @@ def create_app():
     # Register Modern API Blueprint
     app.register_blueprint(api_bp)
 
+    @app.after_request
+    def add_no_cache_headers(response):
+        if request.path.startswith('/api/') or request.path.startswith('/static/'):
+            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            response.headers['Pragma'] = 'no-cache'
+            response.headers['Expires'] = '0'
+        return response
+
     # ──────────────────────────────────────────────
     # Serve Legacy & Static Asset Directories
     # ──────────────────────────────────────────────
