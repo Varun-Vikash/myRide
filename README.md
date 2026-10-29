@@ -1,15 +1,6 @@
 # myRide@BIT: Real-Time Campus Electric Shuttle Bus Tracking, Navigation & Dynamic Dispatch System
 
-**myRide@BIT** is an enterprise-grade campus transit tracking and dynamic demand-responsive dispatch platform developed for **Bannari Amman Institute of Technology (BIT)**. It features real-time 60 FPS multi-shuttle bus simulation, shortest-path Dijkstra graph routing across an 80-node calibrated campus road network, automated EV battery depletion monitoring with standby depot swaps, and role-based portals for Administrators, Drivers, and Students.
-
----
-
-## 👨‍💻 Project Details
-
-- **Author / Candidate:** VARUN VIKASH S (`7376232IT275`)
-- **Supervisor & HoD:** Dr. NAVEENA S, Professor & Head, Department of Information Technology
-- **Institution:** Bannari Amman Institute of Technology (Autonomous, Affiliated to Anna University, Chennai)
-- **Year / Month:** October 2026
+**myRide@BIT** is an campus transit tracking and dynamic demand-responsive dispatch platform developed for **Bannari Amman Institute of Technology (BIT)**. It features real-time 60 FPS multi-shuttle bus simulation, shortest-path Dijkstra graph routing across an 80-node calibrated campus road network, automated EV battery depletion monitoring with standby depot swaps, and role-based portals for Administrators, Drivers, and Students.
 
 ---
 
