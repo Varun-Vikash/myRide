@@ -498,6 +498,24 @@ def driver_acknowledge_request(req_id):
     db.session.commit()
     return jsonify({'success': True, 'request': bus_req.to_dict()})
 
+@api_bp.route('/driver/requests/<int:req_id>/pickup', methods=['PATCH', 'POST'])
+def driver_pickup_student(req_id):
+    """Mark student as physically picked up — they are now onboard."""
+    driver_user = get_role_user('driver')
+    if not driver_user:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    bus_req = BusRequest.query.get(req_id)
+    if not bus_req or bus_req.driver_id != driver_user.id:
+        return jsonify({'error': 'Request not found'}), 404
+    if bus_req.status not in ('acknowledged', 'on_the_way', 'assigned'):
+        return jsonify({'error': 'Cannot mark pickup for this request'}), 400
+    
+    bus_req.status = 'picked_up'
+    bus_req.acknowledged_at = bus_req.acknowledged_at or datetime.utcnow()
+    db.session.commit()
+    return jsonify({'success': True, 'request': bus_req.to_dict()})
+
 @api_bp.route('/driver/requests/<int:req_id>/complete', methods=['PATCH', 'POST'])
 def driver_complete_request(req_id):
     driver_user = get_role_user('driver')
@@ -507,10 +525,58 @@ def driver_complete_request(req_id):
     bus_req = BusRequest.query.get(req_id)
     if not bus_req or bus_req.driver_id != driver_user.id:
         return jsonify({'error': 'Request not found'}), 404
-    if bus_req.status not in ('acknowledged', 'picked_up'):
-        return jsonify({'error': 'Can only complete acknowledged or picked up requests'}), 400
+    if bus_req.status not in ('acknowledged', 'picked_up', 'on_the_way', 'assigned'):
+        return jsonify({'error': 'Cannot complete this request'}), 400
     
     bus_req.status = 'completed'
     bus_req.completed_at = datetime.utcnow()
     db.session.commit()
     return jsonify({'success': True, 'request': bus_req.to_dict()})
+
+@api_bp.route('/driver/trip-status')
+def driver_trip_status():
+    """Comprehensive current-trip status: onboard, en-route, pending, completed passengers for this driver's bus."""
+    driver_user = get_role_user('driver')
+    if not driver_user:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    bus = Bus.query.filter_by(driver_id=driver_user.id).first()
+
+    # Fetch ALL requests for this driver grouped by trip status
+    all_requests = BusRequest.query.filter_by(driver_id=driver_user.id).order_by(BusRequest.created_at.asc()).all()
+
+    onboard       = [r.to_dict() for r in all_requests if r.status == 'picked_up']
+    en_route      = [r.to_dict() for r in all_requests if r.status in ('acknowledged', 'on_the_way')]
+    pending       = [r.to_dict() for r in all_requests if r.status == 'assigned']
+    completed_today = [r.to_dict() for r in all_requests if r.status in ('completed', 'cancelled')]
+
+    # Build next destination: first drop stop of onboard passengers, then first en-route pickup
+    next_dest = None
+    next_dest_type = None
+    if onboard:
+        next_dest = onboard[0]['drop_stop']
+        next_dest_type = 'drop'
+    elif en_route:
+        next_dest = en_route[0]['pickup_stop']
+        next_dest_type = 'pickup'
+    elif pending:
+        next_dest = pending[0]['pickup_stop']
+        next_dest_type = 'pickup'
+
+    return jsonify({
+        'bus': bus.to_dict() if bus else None,
+        'driver': {'id': driver_user.id, 'full_name': driver_user.full_name, 'username': driver_user.username},
+        'summary': {
+            'onboard_count':    len(onboard),
+            'en_route_count':   len(en_route),
+            'pending_count':    len(pending),
+            'completed_count':  len(completed_today),
+            'total_capacity':   bus.capacity if bus else 32,
+            'next_destination': next_dest,
+            'next_dest_type':   next_dest_type,
+        },
+        'onboard':    onboard,
+        'en_route':   en_route,
+        'pending':    pending,
+        'completed':  completed_today,
+    })

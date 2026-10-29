@@ -4,397 +4,542 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>myRide@BIT - Driver Dashboard</title>
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Overlock:ital,wght@0,400;0,700;0,900;1,400&family=Yeon+Sung&display=swap" rel="stylesheet">
-    <!-- Semantic UI -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.css">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Overlock:ital,wght@0,400;0,700;0,900;1,400&family=Yeon+Sung&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --primary: mediumslateblue; /* #7B68EE */
-            --bg-page: #14151b;
+            --primary:    #7B68EE; /* mediumslateblue */
+            --primary-d:  #5843eb;
+            --bg-page:    #14151b;
             --bg-surface: #1e1f26;
-            --bg-input: #282b37;
-            --text-main: #e2e8f0;
+            --bg-input:   #282b37;
+            --text-main:  #e2e8f0;
             --text-muted: #94a3b8;
-            --text-heading: #cbd5e1;
-            --border-color: #363842;
-            --border-radius: 7px;
-            --shadow: 0 2px 12px #474A56;
-            
-            --status-pending: #f59e0b;
-            --status-assigned: #3b82f6;
-            --status-acknowledged: #10b981;
-            --status-completed: #6b7280;
-            --status-cancelled: #ef4444;
+            --text-head:  #cbd5e1;
+            --border:     #363842;
+            --radius:     8px;
+            --shadow:     0 2px 14px rgba(0,0,0,0.45);
+            --btn-shadow: 2px 2px 0 #474A56;
+
+            --green:   #10b981;
+            --amber:   #f59e0b;
+            --blue:    #3b82f6;
+            --purple:  #a78bfa;
+            --red:     #ef4444;
+            --gray:    #6b7280;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background-color: var(--bg-page);
+            background: var(--bg-page);
             color: var(--text-main);
             font-family: 'Overlock', sans-serif;
-            margin: 0;
-            padding: 0;
-            padding-top: 60px; /* For fixed navbar */
+            padding-top: 62px;
+            min-height: 100vh;
         }
 
-        h1, h2, h3, h4, h5, h6, .brand-font {
-            font-family: 'Yeon Sung', cursive;
-            color: var(--text-heading);
-        }
+        h1, h2, h3, h4, .yeon { font-family: 'Yeon Sung', cursive; color: var(--text-head); }
 
-        /* Top Navigation Bar */
+        /* ── Navbar ─────────────────────────────────── */
         .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background-color: var(--bg-surface);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            z-index: 1000;
+            position: fixed; top: 0; left: 0; right: 0; height: 62px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; z-index: 1000; gap: 12px;
         }
-
         .navbar-brand {
             font-family: 'Yeon Sung', cursive;
-            color: var(--primary);
-            font-size: 1.5rem;
-            text-decoration: none;
+            color: var(--primary); font-size: 1.45rem;
+            text-decoration: none; white-space: nowrap;
         }
+        .navbar-title { font-size: 1.1rem; color: var(--text-head); white-space: nowrap; }
+        .navbar-links { display: flex; align-items: center; gap: 7px; }
+        .navbar-user  { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
 
-        .navbar-title {
-            font-size: 1.25rem;
-            color: var(--text-heading);
-        }
-
-        .navbar-user {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            color: var(--text-main);
-        }
-
+        /* ── Generic Btn ─────────────────────────────── */
         .btn {
-            background: var(--primary);
-            color: white;
-            border: 1px solid black;
-            border-radius: var(--border-radius);
-            box-shadow: 2px 2px 0 #474A56;
-            padding: 8px 16px;
-            cursor: pointer;
-            font-family: 'Overlock', sans-serif;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 0.9rem;
-            transition: transform 0.1s;
+            background: var(--primary); color: white;
+            border: 1px solid black; border-radius: var(--radius);
+            box-shadow: var(--btn-shadow);
+            padding: 7px 14px; cursor: pointer;
+            font-family: 'Overlock', sans-serif; font-size: 0.88rem;
+            text-decoration: none; display: inline-block;
+            transition: transform 0.1s, opacity 0.15s;
         }
+        .btn:hover  { opacity: 0.91; }
+        .btn:active { transform: translate(2px,2px); box-shadow: none; }
+        .btn-ghost  { background: #282b37; border-color: #363842; }
+        .btn-green  { background: var(--green); }
+        .btn-blue   { background: var(--blue); }
+        .btn-amber  { background: var(--amber); color: #000; }
+        .btn-red    { background: var(--red); }
+        .btn-sm     { padding: 5px 10px; font-size: 0.8rem; }
 
-        .btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 0px 0px 0 #474A56;
-        }
-        
-        .btn-ack {
-            background: var(--status-acknowledged);
-        }
-        
-        .btn-complete {
-            background: var(--status-assigned);
-        }
+        /* ── Page layout ─────────────────────────────── */
+        .page { max-width: 1100px; margin: 0 auto; padding: 24px 18px; display: grid; gap: 20px; }
 
-        /* Main Container */
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 30px 20px;
+        /* ── Bus Info Banner ─────────────────────────── */
+        .bus-banner {
+            background: linear-gradient(135deg, rgba(123,104,238,0.18), rgba(59,130,246,0.14));
+            border: 1px solid rgba(123,104,238,0.38);
+            border-radius: var(--radius);
+            padding: 18px 22px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            align-items: center; gap: 16px;
         }
+        @media(max-width:720px){ .bus-banner{ grid-template-columns:1fr 1fr; } }
+        .stat-block { text-align: center; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--text-main); font-family: 'Inter', sans-serif; }
+        .stat-unit  { font-size: 0.8rem; color: var(--text-muted); margin-left: 3px; }
 
-        /* Info Banner */
-        .info-banner {
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
+        /* battery bar */
+        .batt-wrap { width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .batt-fill  { height: 100%; border-radius: 4px; transition: width 0.5s ease, background 0.4s ease; }
+
+        /* next-dest pill */
+        .next-dest-pill {
+            background: rgba(123,104,238,0.22);
+            border: 1px solid rgba(123,104,238,0.5);
+            border-radius: 20px; padding: 5px 14px;
+            font-size: 0.82rem; font-family: 'Inter', sans-serif;
+            color: #c4b5fd; display: flex; align-items: center; gap: 6px;
+            white-space: nowrap;
+        }
+        .next-dest-pill.drop { background: rgba(16,185,129,0.18); border-color: rgba(16,185,129,0.5); color: #6ee7b7; }
+
+        /* ── Section cards ───────────────────────────── */
+        .section-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 20px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            overflow: hidden;
         }
+        .section-head {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255,255,255,0.03);
+        }
+        .section-head h2 { font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .section-body { padding: 14px 16px; }
 
-        .info-banner p {
-            margin: 5px 0;
-            color: var(--text-muted);
+        /* ── Occupancy bar ───────────────────────────── */
+        .occupancy-bar-wrap {
+            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
         }
-        
-        .info-banner .value {
-            color: var(--text-main);
-            font-weight: bold;
-        }
-        
-        .bus-badge {
-            background-color: var(--primary);
-            color: white;
-            padding: 5px 10px;
-            border-radius: var(--border-radius);
-            font-weight: bold;
-        }
+        .occupancy-label { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; }
+        .occupancy-bar { flex: 1; height: 10px; background: rgba(255,255,255,0.07); border-radius: 5px; overflow: hidden; }
+        .occupancy-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+        .occupancy-count { font-size: 0.85rem; font-family: 'Inter', sans-serif; font-weight: 600; white-space: nowrap; }
 
-        /* Requests Section */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
+        /* ── Trip-board grid ─────────────────────────── */
+        .trip-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            padding: 14px 16px;
         }
-        
-        .request-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+        @media(max-width:860px){ .trip-grid{ grid-template-columns: repeat(2,1fr); } }
+        @media(max-width:500px){ .trip-grid{ grid-template-columns: 1fr; } }
 
-        .request-card {
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .trip-col {}
+        .trip-col-head {
+            font-size: 0.72rem; font-weight: 700; letter-spacing: .08em;
+            text-transform: uppercase; margin-bottom: 9px;
+            display: flex; align-items: center; gap: 6px;
         }
-        
-        .request-details {
-            flex-grow: 1;
-        }
-        
-        .student-name {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: var(--text-heading);
-            margin-bottom: 5px;
-        }
-        
-        .route-info {
-            color: var(--text-main);
-            margin-bottom: 5px;
-        }
-        
-        .time-info {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
+        .col-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .dot-onboard  { background: var(--green); }
+        .dot-enroute  { background: var(--blue); }
+        .dot-pending  { background: var(--amber); }
+        .dot-done     { background: var(--gray); }
 
+        /* ── Passenger cards ─────────────────────────── */
+        .pax-card {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            position: relative;
+            transition: border-color 0.2s;
+        }
+        .pax-card:last-child { margin-bottom: 0; }
+        .pax-card.onboard  { border-left: 3px solid var(--green); }
+        .pax-card.en-route { border-left: 3px solid var(--blue); }
+        .pax-card.pending  { border-left: 3px solid var(--amber); }
+        .pax-card.done     { border-left: 3px solid var(--gray); opacity: 0.65; }
+
+        .pax-name   { font-size: 0.9rem; font-weight: 700; color: var(--text-head); margin-bottom: 4px; }
+        .pax-route  { font-size: 0.77rem; color: var(--text-muted); margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+        .pax-route .stop-from { color: var(--text-main); }
+        .pax-route .stop-to   { color: var(--text-main); }
+        .pax-time   { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 6px; font-family: 'Inter', sans-serif; }
+        .pax-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        /* badge */
         .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: var(--border-radius);
+            display: inline-block; padding: 2px 7px; border-radius: 4px;
+            font-size: 0.7rem; font-weight: 700; font-family: 'Inter', sans-serif;
+            text-transform: uppercase; white-space: nowrap;
+        }
+        .badge-onboard     { background: rgba(16,185,129,0.2); color: var(--green); border: 1px solid rgba(16,185,129,0.4); }
+        .badge-en_route    { background: rgba(59,130,246,0.2); color: var(--blue);  border: 1px solid rgba(59,130,246,0.4); }
+        .badge-acknowledged{ background: rgba(59,130,246,0.2); color: var(--blue);  border: 1px solid rgba(59,130,246,0.4); }
+        .badge-on_the_way  { background: rgba(167,139,250,0.2); color: var(--purple);border: 1px solid rgba(167,139,250,0.4); }
+        .badge-assigned    { background: rgba(245,158,11,0.2); color: var(--amber); border: 1px solid rgba(245,158,11,0.4); }
+        .badge-picked_up   { background: rgba(16,185,129,0.2); color: var(--green); border: 1px solid rgba(16,185,129,0.4); }
+        .badge-completed   { background: rgba(107,114,128,0.2); color: var(--gray); border: 1px solid rgba(107,114,128,0.3); }
+        .badge-cancelled   { background: rgba(239,68,68,0.2); color: var(--red);   border: 1px solid rgba(239,68,68,0.3); }
+
+        /* empty state */
+        .col-empty {
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed var(--border);
+            border-radius: 6px; padding: 18px 10px;
+            text-align: center; color: var(--text-muted);
             font-size: 0.8rem;
-            font-weight: bold;
-            color: white;
-            margin-left: 10px;
-            text-transform: capitalize;
         }
 
-        .badge-pending { background-color: var(--status-pending); }
-        .badge-assigned { background-color: var(--status-assigned); }
-        .badge-acknowledged { background-color: var(--status-acknowledged); }
-        .badge-completed { background-color: var(--status-completed); }
-        .badge-cancelled { background-color: var(--status-cancelled); }
-
-        .request-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            min-width: 150px;
-            text-align: right;
+        /* ── Refresh indicator ───────────────────────── */
+        .live-dot {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 0.75rem; color: var(--green); font-family: 'Inter', sans-serif;
+        }
+        .live-dot::before {
+            content: '';
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--green);
+            animation: pulse 1.4s infinite;
+            display: inline-block;
+        }
+        @keyframes pulse {
+            0%,100% { opacity: 1; transform: scale(1); }
+            50%      { opacity: 0.4; transform: scale(0.7); }
         }
 
-        .empty-state {
-            background-color: var(--bg-surface);
-            border: 1px dashed var(--border-color);
-            border-radius: var(--border-radius);
-            padding: 40px;
-            text-align: center;
-            color: var(--text-muted);
+        /* ── Toast ───────────────────────────────────── */
+        #toast {
+            position: fixed; bottom: 28px; right: 24px;
+            background: var(--bg-surface); border: 1px solid var(--border);
+            border-radius: 8px; padding: 10px 18px;
+            font-size: 0.88rem; z-index: 2000;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+            opacity: 0; transform: translateY(10px);
+            transition: opacity 0.25s, transform 0.25s;
+            pointer-events: none;
         }
-        
-        .map-link-container {
-            margin-top: 30px;
-            text-align: center;
-        }
-        
-        .map-link {
-            color: var(--primary);
-            text-decoration: none;
-        }
-        
-        .map-link:hover {
-            text-decoration: underline;
-        }
+        #toast.show { opacity: 1; transform: translateY(0); }
+        #toast.success { border-left: 4px solid var(--green); }
+        #toast.error   { border-left: 4px solid var(--red); }
     </style>
 </head>
 <body>
 
-    <!-- Top Navigation Bar -->
+    <!-- Navbar -->
     <nav class="navbar">
-        <a href="/" target="_blank" class="navbar-brand" title="Open Campus Live Map">myRide@BIT</a>
+        <a href="/" target="_blank" class="navbar-brand" title="Live Campus Map">myRide@BIT</a>
         <div class="navbar-title">🚌 Driver Dashboard</div>
-        <div style="display:flex; align-items:center; gap:8px;">
-            <a href="/admin" target="_blank" class="btn" style="background:#282b37; border-color:#363842; font-size:13px; padding:6px 12px;" title="Open Admin Dashboard in new tab">🛡️ Admin ↗</a>
-            <a href="/student" target="_blank" class="btn" style="background:#282b37; border-color:#363842; font-size:13px; padding:6px 12px;" title="Open Student Dashboard in new tab">🎓 Student ↗</a>
-            <a href="/login" target="_blank" class="btn" style="background:#282b37; border-color:#363842; font-size:13px; padding:6px 12px;" title="Open Portal Hub">🔑 Hub ↗</a>
+        <div class="navbar-links">
+            <a href="/admin"   target="_blank" class="btn btn-ghost btn-sm">🛡️ Admin ↗</a>
+            <a href="/student" target="_blank" class="btn btn-ghost btn-sm">🎓 Student ↗</a>
+            <a href="/login"   target="_blank" class="btn btn-ghost btn-sm">🔑 Hub ↗</a>
         </div>
         <div class="navbar-user">
-            <span>Welcome, {{ user.full_name }}</span>
-            <a href="/logout?role=driver" class="btn">Logout</a>
+            <span style="font-size:0.9rem;">{{ user.full_name }}</span>
+            <a href="/logout?role=driver" class="btn btn-sm">Logout</a>
         </div>
     </nav>
 
-    <!-- Main Container -->
-    <div class="container">
-        
-        <!-- Driver Info Banner -->
-        <div class="info-banner" id="driver-info">
-            <div id="driver-details">Loading assigned bus information...</div>
+    <div class="page">
+
+        <!-- Bus Status Banner -->
+        <div class="bus-banner" id="bus-banner">
+            <div class="stat-block">
+                <div class="stat-label">Assigned Bus</div>
+                <div class="stat-value" id="stat-bus">—</div>
+                <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;" id="stat-route">Loading...</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Battery</div>
+                <div>
+                    <span class="stat-value" id="stat-batt">—</span>
+                    <span class="stat-unit">%</span>
+                </div>
+                <div class="batt-wrap"><div class="batt-fill" id="batt-bar" style="width:0%;background:var(--green);"></div></div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">Bus Status</div>
+                <div class="stat-value" id="stat-status" style="font-size:1rem; margin-top:4px;">—</div>
+            </div>
+            <div style="text-align:right;">
+                <div class="stat-label" style="text-align:right; margin-bottom:8px;">Next Destination</div>
+                <div id="next-dest-pill">—</div>
+            </div>
         </div>
 
-        <!-- Pickup Requests Section -->
-        <div class="section-header">
-            <h2>📋 Assigned Pickup Requests</h2>
-        </div>
-        
-        <div class="request-list" id="requests-list">
-            <!-- Requests injected here via JS -->
-            <div class="empty-state">Loading pickup requests...</div>
-        </div>
-        
-        <!-- Quick link to Campus Map -->
-        <div class="map-link-container">
-            <a href="/" class="map-link">View Campus Map &rarr;</a>
+        <!-- Live Trip Board -->
+        <div class="section-card">
+            <div class="section-head">
+                <h2>🎯 Live Trip Board</h2>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <span class="live-dot">Auto-refresh (5s)</span>
+                    <button class="btn btn-sm" onclick="refreshAll()" title="Refresh now">↻ Refresh</button>
+                </div>
+            </div>
+
+            <!-- Occupancy bar -->
+            <div class="occupancy-bar-wrap">
+                <span class="occupancy-label">🚌 Occupancy</span>
+                <div class="occupancy-bar">
+                    <div class="occupancy-fill" id="occ-bar" style="width:0%; background:var(--green);"></div>
+                </div>
+                <span class="occupancy-count" id="occ-count">0 / 32</span>
+            </div>
+
+            <!-- 4-column trip grid -->
+            <div class="trip-grid">
+                <!-- ONBOARD -->
+                <div class="trip-col">
+                    <div class="trip-col-head">
+                        <span class="col-dot dot-onboard"></span>
+                        Onboard <span id="cnt-onboard">(0)</span>
+                    </div>
+                    <div id="col-onboard"><div class="col-empty">No passengers onboard</div></div>
+                </div>
+
+                <!-- EN ROUTE (acknowledged / on_the_way) -->
+                <div class="trip-col">
+                    <div class="trip-col-head">
+                        <span class="col-dot dot-enroute"></span>
+                        En Route to Pickup <span id="cnt-enroute">(0)</span>
+                    </div>
+                    <div id="col-enroute"><div class="col-empty">No pickups in progress</div></div>
+                </div>
+
+                <!-- PENDING (assigned) -->
+                <div class="trip-col">
+                    <div class="trip-col-head">
+                        <span class="col-dot dot-pending"></span>
+                        Pending Pickup <span id="cnt-pending">(0)</span>
+                    </div>
+                    <div id="col-pending"><div class="col-empty">No pending requests</div></div>
+                </div>
+
+                <!-- COMPLETED today -->
+                <div class="trip-col">
+                    <div class="trip-col-head">
+                        <span class="col-dot dot-done"></span>
+                        Completed / Cancelled <span id="cnt-done">(0)</span>
+                    </div>
+                    <div id="col-done"><div class="col-empty">No completed trips yet</div></div>
+                </div>
+            </div>
         </div>
 
     </div>
 
-    <!-- JavaScript -->
+    <!-- Toast notification -->
+    <div id="toast"></div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchDriverInfo();
-            fetchRequests();
-            
-            // Auto-refresh every 5 seconds
-            setInterval(fetchRequests, 5000);
-        });
-        
-        async function fetchDriverInfo() {
+        /* ── Utility ──────────────────────────────────── */
+        function showToast(msg, type='success') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = `show ${type}`;
+            clearTimeout(t._timer);
+            t._timer = setTimeout(() => { t.className = ''; }, 3200);
+        }
+
+        function fmtTime(iso) {
+            if (!iso) return '';
+            const d = new Date(iso);
+            return d.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+        }
+
+        function shortStop(name) {
+            // Truncate very long stop names for card display
+            return name && name.length > 28 ? name.slice(0, 26) + '…' : (name || '—');
+        }
+
+        function battColor(pct) {
+            if (pct > 50) return '#10b981';
+            if (pct > 20) return '#f59e0b';
+            return '#ef4444';
+        }
+
+        function statusLabel(s) {
+            const map = {
+                picked_up:    '✅ Onboard',
+                acknowledged: '🔵 En Route',
+                on_the_way:   '🟣 On the Way',
+                assigned:     '⏳ Assigned',
+                completed:    '✔ Completed',
+                cancelled:    '✖ Cancelled',
+            };
+            return map[s] || s;
+        }
+
+        /* ── Render passenger card ──────────────────────── */
+        function renderPaxCard(req, cssClass) {
+            const statusBadge = `<span class="badge badge-${req.status}">${statusLabel(req.status)}</span>`;
+            const createdTime = fmtTime(req.created_at);
+            const ackTime     = req.acknowledged_at ? ` · Ack: ${fmtTime(req.acknowledged_at)}` : '';
+            const doneTime    = req.completed_at ? ` · Done: ${fmtTime(req.completed_at)}` : '';
+
+            let actions = '';
+            if (req.status === 'assigned' || req.status === 'on_the_way') {
+                actions = `<button class="btn btn-blue btn-sm" onclick="doAction(${req.id},'acknowledge')" title="Confirm you're heading to this student">Accept &amp; En Route</button>`;
+            } else if (req.status === 'acknowledged') {
+                actions = `<button class="btn btn-green btn-sm" onclick="doAction(${req.id},'pickup')" title="Student has boarded the bus">Picked Up 🟢</button>`;
+            } else if (req.status === 'picked_up') {
+                actions = `<button class="btn btn-sm" style="background:var(--primary);" onclick="doAction(${req.id},'complete')" title="Student has been dropped at destination">Drop Off 🏁</button>`;
+            }
+
+            return `
+            <div class="pax-card ${cssClass}" id="pax-${req.id}">
+                <div class="pax-name">${req.student_name || 'Student'} ${statusBadge}</div>
+                <div class="pax-route">
+                    <span class="stop-from">📍 ${shortStop(req.pickup_stop)}</span>
+                    <span style="color:var(--text-muted);">→</span>
+                    <span class="stop-to">🏁 ${shortStop(req.drop_stop)}</span>
+                </div>
+                <div class="pax-time">Req: ${createdTime}${ackTime}${doneTime}</div>
+                ${actions ? `<div class="pax-actions">${actions}</div>` : ''}
+            </div>`;
+        }
+
+        /* ── Update UI from trip-status payload ─────────── */
+        function applyTripStatus(data) {
+            // --- Bus Banner ---
+            const bus = data.bus;
+            if (bus) {
+                document.getElementById('stat-bus').textContent   = bus.bus_no || '—';
+                document.getElementById('stat-route').textContent = bus.route_name || bus.route_id || 'Campus Route';
+                const batt = Math.round(bus.battery_level || 0);
+                document.getElementById('stat-batt').textContent  = batt;
+                const bc = battColor(batt);
+                const bar = document.getElementById('batt-bar');
+                bar.style.width = `${batt}%`;
+                bar.style.background = bc;
+
+                const statusMap = {
+                    active: '🟢 Active',
+                    charging: '⚡ Charging',
+                    backup: '🔵 Standby',
+                    en_route_pickup: '🚌 En Route Pickup',
+                    returning_to_charge: '🔋 Returning to Charge',
+                };
+                document.getElementById('stat-status').textContent = statusMap[bus.bus_status] || bus.bus_status || '—';
+            } else {
+                document.getElementById('stat-bus').textContent = 'Not Assigned';
+                document.getElementById('stat-route').textContent = 'Contact Admin';
+            }
+
+            // --- Next destination pill ---
+            const s = data.summary;
+            const pillEl = document.getElementById('next-dest-pill');
+            if (s.next_destination) {
+                const icon = s.next_dest_type === 'drop' ? '🏁' : '📍';
+                const cls  = s.next_dest_type === 'drop' ? 'drop' : '';
+                const label = s.next_dest_type === 'drop' ? 'Drop-off' : 'Pickup';
+                pillEl.innerHTML = `<span class="next-dest-pill ${cls}">${icon} <strong>${label}:</strong> ${shortStop(s.next_destination)}</span>`;
+            } else {
+                pillEl.innerHTML = `<span style="color:var(--text-muted);font-size:0.85rem;">No active passengers</span>`;
+            }
+
+            // --- Occupancy bar ---
+            const cap  = s.total_capacity || 32;
+            const occ  = s.onboard_count || 0;
+            const pct  = Math.min(100, Math.round(occ / cap * 100));
+            const occBar = document.getElementById('occ-bar');
+            occBar.style.width    = `${pct}%`;
+            occBar.style.background = occ === 0 ? 'var(--gray)' : occ / cap > 0.8 ? 'var(--red)' : occ / cap > 0.5 ? 'var(--amber)' : 'var(--green)';
+            document.getElementById('occ-count').textContent = `${occ} / ${cap} seats`;
+
+            // --- Counters ---
+            document.getElementById('cnt-onboard').textContent = `(${s.onboard_count})`;
+            document.getElementById('cnt-enroute').textContent = `(${s.en_route_count})`;
+            document.getElementById('cnt-pending').textContent = `(${s.pending_count})`;
+            document.getElementById('cnt-done').textContent    = `(${s.completed_count})`;
+
+            // --- Columns ---
+            const colOnboard = document.getElementById('col-onboard');
+            const colEnroute = document.getElementById('col-enroute');
+            const colPending = document.getElementById('col-pending');
+            const colDone    = document.getElementById('col-done');
+
+            colOnboard.innerHTML = data.onboard.length
+                ? data.onboard.map(r => renderPaxCard(r, 'onboard')).join('')
+                : '<div class="col-empty">No passengers onboard yet</div>';
+
+            colEnroute.innerHTML = data.en_route.length
+                ? data.en_route.map(r => renderPaxCard(r, 'en-route')).join('')
+                : '<div class="col-empty">Not heading to any pickup</div>';
+
+            colPending.innerHTML = data.pending.length
+                ? data.pending.map(r => renderPaxCard(r, 'pending')).join('')
+                : '<div class="col-empty">No pending requests</div>';
+
+            colDone.innerHTML = data.completed.length
+                ? data.completed.slice(0, 6).map(r => renderPaxCard(r, 'done')).join('')
+                : '<div class="col-empty">No completed trips yet</div>';
+        }
+
+        /* ── Fetch trip status ─────────────────────────── */
+        async function refreshAll() {
             try {
-                const response = await fetch('/api/driver/my-bus');
-                const infoContainer = document.getElementById('driver-details');
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    const bus = data && (data.bus || data);
-                    
-                    if (bus && (bus.bus_no || bus.bus_number)) {
-                        infoContainer.innerHTML = `
-                            <div>
-                                <p>Driver Name: <span class="value">{{ user.full_name }}</span></p>
-                                <p>Assigned Bus: <span class="bus-badge">${bus.bus_no || bus.bus_number}</span></p>
-                                <p>Route Name: <span class="value">${bus.route_name || 'Campus Route'}</span></p>
-                            </div>
-                        `;
-                    } else {
-                        infoContainer.innerHTML = `
-                            <p>You have not been assigned to a bus yet. Please contact the administrator.</p>
-                        `;
-                    }
-                } else {
-                    infoContainer.innerHTML = `<p>Error loading bus information.</p>`;
+                const res = await fetch('/api/driver/trip-status');
+                if (res.ok) {
+                    const data = await res.json();
+                    applyTripStatus(data);
+                } else if (res.status === 403) {
+                    showToast('Session expired — please refresh the page.', 'error');
                 }
-            } catch (error) {
-                console.error("Error fetching driver info:", error);
-                document.getElementById('driver-details').innerHTML = `<p>Error connecting to server.</p>`;
+            } catch(e) {
+                console.error('Trip status error:', e);
             }
         }
-        
-        async function fetchRequests() {
+
+        /* ── Action button handler ──────────────────────── */
+        async function doAction(reqId, action) {
+            const btn = document.querySelector(`#pax-${reqId} button`);
+            if (btn) { btn.disabled = true; btn.textContent = '…'; }
+
             try {
-                const response = await fetch('/api/driver/requests');
-                const listContainer = document.getElementById('requests-list');
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    const requests = data.requests || data || []; // Handle different response formats
-                    
-                    if (requests.length === 0) {
-                        listContainer.innerHTML = `
-                            <div class="empty-state">No pickup requests assigned. Waiting for new assignments...</div>
-                        `;
-                        return;
-                    }
-                    
-                    let html = '';
-                    requests.forEach(req => {
-                        // Determine button based on status
-                        let actionHtml = '';
-                        if (req.status === 'assigned') {
-                            actionHtml = `<button class="btn btn-ack" onclick="updateRequestStatus('${req.id}', 'acknowledge')">Acknowledge Pickup &#10003;</button>`;
-                        } else if (req.status === 'acknowledged') {
-                            actionHtml = `<button class="btn btn-complete" onclick="updateRequestStatus('${req.id}', 'complete')">Complete Trip &#127937;</button>`;
-                        }
-                        
-                        html += `
-                            <div class="request-card">
-                                <div class="request-details">
-                                    <div class="student-name">
-                                        ${req.student_name}
-                                        <span class="badge badge-${req.status}">${req.status}</span>
-                                    </div>
-                                    <div class="route-info">${req.pickup_stop} &rarr; ${req.drop_stop}</div>
-                                    <div class="time-info">Created: ${req.created_at || 'Just now'}</div>
-                                </div>
-                                <div class="request-actions">
-                                    ${actionHtml}
-                                </div>
-                            </div>
-                        `;
-                    });
-                    
-                    listContainer.innerHTML = html;
-                }
-            } catch (error) {
-                console.error("Error fetching requests:", error);
-            }
-        }
-        
-        async function updateRequestStatus(requestId, action) {
-            try {
-                const response = await fetch(`/api/driver/requests/${requestId}/${action}`, {
+                const res = await fetch(`/api/driver/requests/${reqId}/${action}`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                    headers: { 'Content-Type': 'application/json' }
                 });
-                
-                if (response.ok) {
-                    fetchRequests(); // Refresh list
+                const data = await res.json();
+                if (res.ok) {
+                    const labels = { acknowledge:'En Route ✓', pickup:'Picked Up ✓', complete:'Dropped Off ✓' };
+                    showToast(`${labels[action] || action} — updating board…`, 'success');
+                    await refreshAll();
                 } else {
-                    alert(`Failed to ${action} request.`);
+                    showToast(data.error || `Action failed: ${action}`, 'error');
+                    if (btn) { btn.disabled = false; btn.textContent = 'Retry'; }
                 }
-            } catch (error) {
-                console.error(`Error updating request ${action}:`, error);
-                alert("Error connecting to server.");
+            } catch(e) {
+                showToast('Network error — try again.', 'error');
+                if (btn) { btn.disabled = false; }
             }
         }
+
+        /* ── Boot ───────────────────────────────────────── */
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshAll();
+            setInterval(refreshAll, 5000);
+        });
     </script>
 </body>
 </html>
