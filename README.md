@@ -4,38 +4,10 @@
 
 ---
 
-## 🚀 Installation & Quick Start
-
-### 1. Clone the Repository
-```bash
-git clone <your-repository-url>
-cd geobits-main
-```
-
-### 2. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Initialize & Seed Database (First-Time Setup)
-Initializes default accounts (Admin, Drivers, Students) and shuttle bus fleet configurations:
-```bash
-python seed_db.py
-```
-
-### 4. Start the Application Server
-```bash
-python run.py
-```
-Boots the server and opens your browser at **[http://127.0.0.1:3000](http://127.0.0.1:3000)**.
-
----
-
 ## 🌐 Portal Endpoints
 
 | Portal | Route | Description | Default Credentials |
 | :--- | :--- | :--- | :--- |
-| **Interactive Map** | `/` | 60 FPS live campus navigation & bus tracking | Public access |
 | **Student Portal** | `/student` | On-demand ride hailing & nearest-vehicle dispatch | `student1` / `student123` |
 | **Driver Portal** | `/driver` | Cockpit HUD, active route navigation & passenger manifest | `driver1` / `driver123` |
 | **Admin Portal** | `/admin` | Fleet oversight, live battery telemetry & analytics | `admin` / `admin123` |
