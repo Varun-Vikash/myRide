@@ -396,6 +396,114 @@ def admin_assign_request(req_id):
     return jsonify({'success': True, 'request': bus_req.to_dict()})
 
 
+@api_bp.route('/admin/users', methods=['GET'])
+def admin_list_users():
+    admin_user = get_role_user('admin')
+    if not admin_user:
+        return jsonify({'error': 'Unauthorized'}), 403
+    users = User.query.order_by(User.id.asc()).all()
+    return jsonify([u.to_dict(include_password=True) for u in users])
+
+
+@api_bp.route('/admin/users', methods=['POST'])
+def admin_create_user():
+    admin_user = get_role_user('admin')
+    if not admin_user:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    data = request.get_json() or request.form
+    username = (data.get('username') or '').strip()
+    full_name = (data.get('full_name') or '').strip()
+    role = (data.get('role') or '').strip().lower()
+    password = (data.get('password') or '').strip()
+    phone = (data.get('phone') or '').strip()
+    bus_id = data.get('bus_id')
+
+    if not username:
+        return jsonify({'error': 'Username is required'}), 400
+    if not full_name:
+        return jsonify({'error': 'Full name is required'}), 400
+    if not role or role not in ['student', 'driver', 'admin']:
+        return jsonify({'error': 'Invalid role. Must be student, driver, or admin'}), 400
+    if not password or len(password) < 3:
+        return jsonify({'error': 'Password must be at least 3 characters long'}), 400
+
+    # Ensure username is unique
+    existing = User.query.filter_by(username=username).first()
+    if existing:
+        return jsonify({'error': f'Username "{username}" is already in use'}), 400
+
+    new_user = User(
+        username=username,
+        full_name=full_name,
+        role=role,
+        phone=phone
+    )
+    new_user.set_password(password)
+    db.session.add(new_user)
+    db.session.flush()
+
+    # If role is driver and a bus is selected, assign immediately
+    if role == 'driver' and bus_id:
+        try:
+            bus = Bus.query.get(int(bus_id))
+            if bus:
+                bus.driver_id = new_user.id
+        except (ValueError, TypeError):
+            pass
+
+    db.session.commit()
+    return jsonify({'success': True, 'user': new_user.to_dict(include_password=True)}), 201
+
+
+@api_bp.route('/admin/users/<int:user_id>/password', methods=['POST', 'PATCH', 'PUT'])
+def admin_update_user_password(user_id):
+    admin_user = get_role_user('admin')
+    if not admin_user:
+        return jsonify({'error': 'Unauthorized'}), 403
+
+    target_user = User.query.get(user_id)
+    if not target_user:
+        return jsonify({'error': 'User not found'}), 404
+
+    data = request.get_json() or request.form
+    new_password = (data.get('new_password') or data.get('password') or '').strip()
+    if not new_password or len(new_password) < 3:
+        return jsonify({'error': 'Password must be at least 3 characters long'}), 400
+
+    target_user.set_password(new_password)
+    db.session.commit()
+    return jsonify({'success': True, 'user': target_user.to_dict(include_password=True)})
+
+
+@api_bp.route('/admin/users/<int:user_id>', methods=['DELETE'])
+def admin_delete_user(user_id):
+    admin_user = get_role_user('admin')
+    if not admin_user:
+        return jsonify({'error': 'Unauthorized'}), 403
+
+    if admin_user.id == user_id:
+        return jsonify({'error': 'You cannot delete your own active administrator account'}), 400
+
+    target_user = User.query.get(user_id)
+    if not target_user:
+        return jsonify({'error': 'User not found'}), 404
+
+    # Unlink assigned bus if this was a driver
+    assigned_buses = Bus.query.filter_by(driver_id=user_id).all()
+    for b in assigned_buses:
+        b.driver_id = None
+
+    # Unlink/clear student requests
+    user_requests = BusRequest.query.filter((BusRequest.student_id == user_id) | (BusRequest.driver_id == user_id)).all()
+    for r in user_requests:
+        db.session.delete(r)
+
+    db.session.delete(target_user)
+    db.session.commit()
+    return jsonify({'success': True, 'message': f'User {target_user.username} deleted successfully'})
+
+
 # ──────────────────────────────────────────────
 # Student API Endpoints
 # ──────────────────────────────────────────────

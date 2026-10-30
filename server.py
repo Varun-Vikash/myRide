@@ -70,9 +70,29 @@ def create_app():
                 return None
         return None
 
-    # Create database tables
+    # Create database tables and perform lightweight schema migrations
     with app.app_context():
         db.create_all()
+        try:
+            import sqlite3
+            db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', '')
+            if 'sqlite:///' in db_uri:
+                db_path = db_uri.replace('sqlite:///', '')
+                if os.path.exists(db_path):
+                    conn = sqlite3.connect(db_path)
+                    c = conn.cursor()
+                    c.execute("PRAGMA table_info(users)")
+                    cols = [col[1] for col in c.fetchall()]
+                    if 'raw_password' not in cols:
+                        c.execute("ALTER TABLE users ADD COLUMN raw_password VARCHAR(120) DEFAULT ''")
+                    # Backfill known seed passwords if empty
+                    c.execute("UPDATE users SET raw_password = 'admin123' WHERE username = 'admin' AND (raw_password IS NULL OR raw_password = '')")
+                    c.execute("UPDATE users SET raw_password = 'driver123' WHERE role = 'driver' AND (raw_password IS NULL OR raw_password = '')")
+                    c.execute("UPDATE users SET raw_password = 'student123' WHERE role = 'student' AND (raw_password IS NULL OR raw_password = '')")
+                    conn.commit()
+                    conn.close()
+        except Exception as _schema_err:
+            print("[SCHEMA] Migration note:", _schema_err)
 
     # Register Modern API Blueprint
     app.register_blueprint(api_bp)

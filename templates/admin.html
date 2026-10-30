@@ -226,6 +226,144 @@
         .badge-completed { background-color: var(--status-completed); }
         .badge-cancelled { background-color: var(--status-cancelled); }
 
+        .badge-admin { background-color: #8b5cf6; }
+        .badge-driver { background-color: #3b82f6; }
+        .badge-student { background-color: #10b981; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            width: 90%;
+            max-width: 500px;
+            padding: 24px;
+            position: relative;
+            animation: modalFadeIn 0.2s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-15px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h3 {
+            font-size: 1.4rem;
+            color: var(--text-heading);
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0 4px;
+        }
+        .modal-close:hover {
+            color: #ef4444;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-heading);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+        }
+
+        .password-input-wrap {
+            display: flex;
+            gap: 6px;
+            position: relative;
+        }
+
+        .password-input-wrap input {
+            flex: 1;
+        }
+
+        .btn-icon {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: var(--radius);
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .btn-icon:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .pwd-cell {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            min-width: 180px;
+        }
+
+        .pwd-text {
+            flex: 1;
+            font-size: 13px;
+            font-weight: bold;
+            color: #38bdf8;
+            letter-spacing: 0.5px;
+        }
+
+        .pwd-text.masked {
+            letter-spacing: 2px;
+            color: var(--text-muted);
+        }
+
         .iframe-container {
             width: 100%;
             height: 600px;
@@ -270,6 +408,7 @@
         <button class="tab-btn" id="btn-tab-requests" onclick="openTab('requests', this)">
             Student Requests <span id="requests-badge" style="background:#f59e0b; color:#000; border-radius:10px; padding:2px 7px; font-size:11px; font-weight:bold; margin-left:6px; display:none;">0</span>
         </button>
+        <button class="tab-btn" id="btn-tab-users" onclick="openTab('users', this)">👥 Users & Passwords</button>
         <button class="tab-btn" id="btn-tab-map" onclick="openTab('map', this)">Campus Map</button>
     </div>
 
@@ -329,7 +468,148 @@
             </div>
         </div>
 
-        <!-- Tab 3: Campus Map -->
+        <!-- Tab 3: User Accounts & Passwords -->
+        <div id="tab-users" class="tab-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+                    <div>
+                        <h2 class="section-header" style="margin: 0; padding: 0; border: none;">👥 User Accounts & Credentials</h2>
+                        <div id="users-stats-pills" style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+                            <span class="badge" style="background:var(--bg-input); border:1px solid var(--border); font-size:12px;">Total: <strong id="stat-total-users">0</strong></span>
+                            <span class="badge badge-student" style="font-size:12px;">🎓 Students: <strong id="stat-student-users">0</strong></span>
+                            <span class="badge badge-driver" style="font-size:12px;">🚌 Drivers: <strong id="stat-driver-users">0</strong></span>
+                            <span class="badge badge-admin" style="font-size:12px;">🛡️ Admins: <strong id="stat-admin-users">0</strong></span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <button class="btn" id="btn-toggle-all-pwds" onclick="toggleAllPasswords()" style="background:#282b37; border-color:#363842; font-size:13px;">
+                            👁️ Show All Passwords
+                        </button>
+                        <button class="btn" onclick="openCreateUserModal()" style="background:#10b981; font-weight:bold; font-size:14px; box-shadow: 2px 2px 0 #059669;">
+                            ➕ Create New User
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters & Search Bar -->
+                <div style="display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; background:rgba(255,255,255,0.02); padding:12px; border-radius:var(--radius); border:1px solid var(--border);">
+                    <div style="flex: 1; min-width: 200px;">
+                        <input type="text" id="user-search-input" placeholder="🔍 Search by name, username, or phone..." oninput="filterUsers()" style="width:100%;">
+                    </div>
+                    <div>
+                        <select id="user-role-filter" onchange="filterUsers()" style="padding:8px 14px;">
+                            <option value="all">All Roles</option>
+                            <option value="student">🎓 Students Only</option>
+                            <option value="driver">🚌 Drivers Only</option>
+                            <option value="admin">🛡️ Admins Only</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="fetchUsers()" style="padding: 7px 14px; font-size: 13px;">↻ Refresh</button>
+                </div>
+
+                <div id="users-loading" class="loading">Loading user accounts...</div>
+                <table class="ui celled striped table" id="users-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Role</th>
+                            <th>Full Name</th>
+                            <th>Username</th>
+                            <th>Password (Plaintext / Hidden)</th>
+                            <th>Phone</th>
+                            <th>Assigned Bus</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Create User Modal -->
+        <div id="create-user-modal" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3>➕ Create New User Account</h3>
+                    <button class="modal-close" onclick="closeCreateUserModal()">&times;</button>
+                </div>
+                <form id="create-user-form" onsubmit="handleCreateUser(event)">
+                    <div class="form-group">
+                        <label>Account Role *</label>
+                        <select id="new-user-role" onchange="onRoleChange(this.value)" required>
+                            <option value="student">🎓 Student</option>
+                            <option value="driver">🚌 Driver</option>
+                            <option value="admin">🛡️ Administrator</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="new-user-fullname" placeholder="e.g. Ananya Patel" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Username *</label>
+                        <input type="text" id="new-user-username" placeholder="e.g. student4" required autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label>Password *</label>
+                        <div class="password-input-wrap">
+                            <input type="password" id="new-user-password" placeholder="At least 3 characters" required autocomplete="new-password">
+                            <button type="button" class="btn-icon" id="btn-toggle-new-pwd" onclick="toggleInputMask('new-user-password', this)" title="Show/Hide Password">👁️</button>
+                            <button type="button" class="btn-icon" onclick="generateRandomPassword('new-user-password')" title="Generate Random Password">🎲 Gen</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number (Optional)</label>
+                        <input type="text" id="new-user-phone" placeholder="e.g. 9876543210">
+                    </div>
+                    <div class="form-group" id="driver-bus-group" style="display:none;">
+                        <label>Assign to Bus (Driver Only)</label>
+                        <select id="new-user-bus">
+                            <option value="">-- None (Unassigned) --</option>
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+                    <div id="create-user-error" style="color:#ef4444; font-size:13px; margin-bottom:12px; display:none;"></div>
+                    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+                        <button type="button" class="btn" onclick="closeCreateUserModal()" style="background:#282b37; border-color:#363842;">Cancel</button>
+                        <button type="submit" class="btn" id="btn-submit-create-user" style="background:#10b981; font-weight:bold;">Create User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Change Password Modal -->
+        <div id="change-pwd-modal" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3>🔑 Change User Password</h3>
+                    <button class="modal-close" onclick="closeChangePwdModal()">&times;</button>
+                </div>
+                <form id="change-pwd-form" onsubmit="handleChangePassword(event)">
+                    <input type="hidden" id="change-pwd-uid">
+                    <div style="margin-bottom:15px; color:var(--text-muted); font-size:14px;">
+                        Updating password for: <strong id="change-pwd-target-user" style="color:var(--primary);"></strong>
+                    </div>
+                    <div class="form-group">
+                        <label>New Password *</label>
+                        <div class="password-input-wrap">
+                            <input type="password" id="change-pwd-input" placeholder="Enter new password" required autocomplete="new-password">
+                            <button type="button" class="btn-icon" onclick="toggleInputMask('change-pwd-input', this)" title="Show/Hide">👁️</button>
+                            <button type="button" class="btn-icon" onclick="generateRandomPassword('change-pwd-input')" title="Generate Random">🎲 Gen</button>
+                        </div>
+                    </div>
+                    <div id="change-pwd-error" style="color:#ef4444; font-size:13px; margin-bottom:12px; display:none;"></div>
+                    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+                        <button type="button" class="btn" onclick="closeChangePwdModal()" style="background:#282b37; border-color:#363842;">Cancel</button>
+                        <button type="submit" class="btn" style="background:#7B68EE; font-weight:bold;">Save New Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tab 4: Campus Map -->
         <div id="tab-map" class="tab-content">
             <div class="card">
                 <h2 class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
@@ -348,6 +628,9 @@
         // Global State
         let driversList = [];
         let busesList = [];
+        let allUsersList = [];
+        let allPasswordsVisible = false;
+        let userPwdVisibility = {};
 
         // Tab Switching
         function openTab(tabName, btnEl) {
@@ -368,6 +651,8 @@
                 fetchRequests();
             } else if (tabName === 'buses') {
                 fetchBusesAndDrivers();
+            } else if (tabName === 'users') {
+                fetchUsers();
             }
         }
 
@@ -584,11 +869,360 @@
             }
         }
 
+        // --- Tab 3: User Accounts & Passwords ---
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        async function fetchUsers() {
+            const loadingEl = document.getElementById('users-loading');
+            const tableEl = document.getElementById('users-table');
+            if (loadingEl && allUsersList.length === 0) loadingEl.style.display = 'block';
+
+            try {
+                const res = await fetch('/api/admin/users');
+                if (res.ok) {
+                    allUsersList = await res.json();
+                    updateUserStats();
+                    filterUsers();
+                } else if (res.status === 403) {
+                    alert('Session expired or unauthorized. Please re-login.');
+                }
+            } catch (err) {
+                console.error("Error fetching users:", err);
+            } finally {
+                if (loadingEl) loadingEl.style.display = 'none';
+                if (tableEl) tableEl.style.display = 'table';
+            }
+        }
+
+        function updateUserStats() {
+            const total = allUsersList.length;
+            const students = allUsersList.filter(u => u.role === 'student').length;
+            const drivers = allUsersList.filter(u => u.role === 'driver').length;
+            const admins = allUsersList.filter(u => u.role === 'admin').length;
+
+            const tEl = document.getElementById('stat-total-users');
+            const sEl = document.getElementById('stat-student-users');
+            const dEl = document.getElementById('stat-driver-users');
+            const aEl = document.getElementById('stat-admin-users');
+
+            if (tEl) tEl.textContent = total;
+            if (sEl) sEl.textContent = students;
+            if (dEl) dEl.textContent = drivers;
+            if (aEl) aEl.textContent = admins;
+        }
+
+        function filterUsers() {
+            const q = (document.getElementById('user-search-input')?.value || '').toLowerCase().trim();
+            const roleFilter = document.getElementById('user-role-filter')?.value || 'all';
+
+            const filtered = allUsersList.filter(u => {
+                if (roleFilter !== 'all' && u.role !== roleFilter) return false;
+                if (!q) return true;
+                const matchName = (u.full_name || '').toLowerCase().includes(q);
+                const matchUser = (u.username || '').toLowerCase().includes(q);
+                const matchPhone = (u.phone || '').toLowerCase().includes(q);
+                const matchBus = (u.assigned_bus || '').toLowerCase().includes(q);
+                return matchName || matchUser || matchPhone || matchBus;
+            });
+
+            renderUsers(filtered);
+        }
+
+        function renderUsers(users) {
+            const tbody = document.getElementById('users-body');
+            if (!tbody) return;
+
+            if (!users || users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-muted); font-style:italic;">No user accounts found matching your filter. Click "+ Create New User" above to add one.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                const isVisible = allPasswordsVisible || !!userPwdVisibility[u.id];
+                const rawPwd = u.password || '••••••••';
+                const displayPwd = isVisible ? escapeHtml(rawPwd) : '••••••••';
+
+                let roleBadge = `<span class="badge badge-student">🎓 Student</span>`;
+                if (u.role === 'driver') {
+                    roleBadge = `<span class="badge badge-driver">🚌 Driver</span>`;
+                } else if (u.role === 'admin') {
+                    roleBadge = `<span class="badge badge-admin">🛡️ Admin</span>`;
+                }
+
+                const busInfo = u.assigned_bus 
+                    ? `<strong style="color:var(--primary); font-size:13px;">${escapeHtml(u.assigned_bus)}</strong>`
+                    : (u.role === 'driver' ? '<span style="color:var(--text-muted); font-size:12px;">Unassigned</span>' : '<span style="color:var(--text-muted);">-</span>');
+
+                const isSelf = u.username === 'admin';
+
+                tr.innerHTML = `
+                    <td><strong>#${u.id}</strong></td>
+                    <td>${roleBadge}</td>
+                    <td><strong style="color:var(--text-heading); font-size:14px;">${escapeHtml(u.full_name)}</strong></td>
+                    <td><code style="background:var(--bg-input); padding:2px 6px; border-radius:4px; color:#a78bfa; font-weight:bold;">${escapeHtml(u.username)}</code></td>
+                    <td>
+                        <div class="pwd-cell">
+                            <span class="pwd-text ${isVisible ? '' : 'masked'}" id="pwd-val-${u.id}">${displayPwd}</span>
+                            <button type="button" class="btn-icon" style="padding:2px 6px; font-size:11px;" onclick="toggleUserPassword(${u.id})" title="${isVisible ? 'Hide Password' : 'Show Password'}">
+                                ${isVisible ? '🔒' : '👁️'}
+                            </button>
+                            <button type="button" class="btn-icon" style="padding:2px 6px; font-size:11px;" onclick="copyPassword('${escapeHtml(rawPwd)}', this)" title="Copy Password">
+                                📋
+                            </button>
+                        </div>
+                    </td>
+                    <td><span style="color:var(--text-muted); font-size:13px;">${escapeHtml(u.phone || 'N/A')}</span></td>
+                    <td>${busInfo}</td>
+                    <td>
+                        <div style="display:flex; gap:6px; align-items:center;">
+                            <button class="btn" style="padding:4px 8px; font-size:12px; background:var(--bg-input); border-color:var(--border);" onclick="openChangePwdModal(${u.id}, '${escapeHtml(u.username)}', '${escapeHtml(u.full_name)}')">
+                                🔑 Reset
+                            </button>
+                            ${isSelf ? '' : `
+                            <button class="btn" style="padding:4px 8px; font-size:12px; background:rgba(239,68,68,0.15); border-color:#ef4444; color:#ef4444;" onclick="deleteUser(${u.id}, '${escapeHtml(u.username)}')">
+                                🗑️ Delete
+                            </button>
+                            `}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function toggleUserPassword(uid) {
+            userPwdVisibility[uid] = !userPwdVisibility[uid];
+            filterUsers();
+        }
+
+        function toggleAllPasswords() {
+            allPasswordsVisible = !allPasswordsVisible;
+            const btn = document.getElementById('btn-toggle-all-pwds');
+            if (btn) {
+                btn.innerHTML = allPasswordsVisible ? '🔒 Hide All Passwords' : '👁️ Show All Passwords';
+            }
+            // Reset individual flags to align with global
+            allUsersList.forEach(u => {
+                userPwdVisibility[u.id] = allPasswordsVisible;
+            });
+            filterUsers();
+        }
+
+        function copyPassword(pwd, btnEl) {
+            if (!pwd || pwd === '••••••••') return;
+            navigator.clipboard.writeText(pwd).then(() => {
+                const orig = btnEl.innerHTML;
+                btnEl.innerHTML = '✓';
+                btnEl.style.color = '#10b981';
+                setTimeout(() => {
+                    btnEl.innerHTML = orig;
+                    btnEl.style.color = '';
+                }, 1500);
+            }).catch(console.warn);
+        }
+
+        function toggleInputMask(inputId, btnEl) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                btnEl.innerHTML = '🔒';
+            } else {
+                input.type = 'password';
+                btnEl.innerHTML = '👁️';
+            }
+        }
+
+        function generateRandomPassword(inputId) {
+            const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$';
+            let pwd = '';
+            for (let i = 0; i < 9; i++) {
+                pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.value = pwd;
+                input.type = 'text'; // Show newly generated password clearly
+            }
+        }
+
+        function onRoleChange(role) {
+            const busGroup = document.getElementById('driver-bus-group');
+            if (busGroup) {
+                busGroup.style.display = (role === 'driver') ? 'block' : 'none';
+            }
+        }
+
+        function openCreateUserModal() {
+            const modal = document.getElementById('create-user-modal');
+            const form = document.getElementById('create-user-form');
+            const errDiv = document.getElementById('create-user-error');
+            if (form) form.reset();
+            if (errDiv) { errDiv.textContent = ''; errDiv.style.display = 'none'; }
+            
+            // Populate buses dropdown for driver assignment
+            const busSelect = document.getElementById('new-user-bus');
+            if (busSelect) {
+                busSelect.innerHTML = `<option value="">-- None (Unassigned) --</option>`;
+                busesList.forEach(b => {
+                    busSelect.innerHTML += `<option value="${b.id}">${b.bus_no} (${b.route_name || b.route_id || 'Route'})</option>`;
+                });
+            }
+
+            onRoleChange(document.getElementById('new-user-role')?.value || 'student');
+            if (modal) modal.classList.add('active');
+        }
+
+        function closeCreateUserModal() {
+            const modal = document.getElementById('create-user-modal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        async function handleCreateUser(e) {
+            e.preventDefault();
+            const errDiv = document.getElementById('create-user-error');
+            const submitBtn = document.getElementById('btn-submit-create-user');
+            if (errDiv) { errDiv.textContent = ''; errDiv.style.display = 'none'; }
+
+            const role = document.getElementById('new-user-role').value;
+            const full_name = document.getElementById('new-user-fullname').value.trim();
+            const username = document.getElementById('new-user-username').value.trim();
+            const password = document.getElementById('new-user-password').value.trim();
+            const phone = document.getElementById('new-user-phone').value.trim();
+            const bus_id = document.getElementById('new-user-bus').value;
+
+            if (!username || !full_name || !password) {
+                if (errDiv) { errDiv.textContent = 'Please fill out all required fields.'; errDiv.style.display = 'block'; }
+                return;
+            }
+
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Creating...'; }
+
+            try {
+                const res = await fetch('/api/admin/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        role: role,
+                        full_name: full_name,
+                        username: username,
+                        password: password,
+                        phone: phone,
+                        bus_id: (role === 'driver' && bus_id) ? bus_id : null
+                    })
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    closeCreateUserModal();
+                    await fetchUsers();
+                    if (role === 'driver') fetchBusesAndDrivers();
+                    alert(`✅ User "${username}" (${data.user.role}) created successfully!\nPassword: ${password}`);
+                } else {
+                    if (errDiv) {
+                        errDiv.textContent = data.error || 'Failed to create user account.';
+                        errDiv.style.display = 'block';
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                if (errDiv) { errDiv.textContent = 'Network error. Please try again.'; errDiv.style.display = 'block'; }
+            } finally {
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Create User'; }
+            }
+        }
+
+        function openChangePwdModal(uid, username, fullname) {
+            const modal = document.getElementById('change-pwd-modal');
+            const uidInput = document.getElementById('change-pwd-uid');
+            const targetSpan = document.getElementById('change-pwd-target-user');
+            const pwdInput = document.getElementById('change-pwd-input');
+            const errDiv = document.getElementById('change-pwd-error');
+
+            if (uidInput) uidInput.value = uid;
+            if (targetSpan) targetSpan.textContent = `${fullname} (@${username})`;
+            if (pwdInput) { pwdInput.value = ''; pwdInput.type = 'password'; }
+            if (errDiv) { errDiv.textContent = ''; errDiv.style.display = 'none'; }
+            if (modal) modal.classList.add('active');
+        }
+
+        function closeChangePwdModal() {
+            const modal = document.getElementById('change-pwd-modal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        async function handleChangePassword(e) {
+            e.preventDefault();
+            const uid = document.getElementById('change-pwd-uid').value;
+            const newPassword = document.getElementById('change-pwd-input').value.trim();
+            const errDiv = document.getElementById('change-pwd-error');
+
+            if (!newPassword || newPassword.length < 3) {
+                if (errDiv) { errDiv.textContent = 'Password must be at least 3 characters long.'; errDiv.style.display = 'block'; }
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/admin/users/${uid}/password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: newPassword })
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    closeChangePwdModal();
+                    await fetchUsers();
+                    alert(`✅ Password updated successfully for user!\nNew Password: ${newPassword}`);
+                } else {
+                    if (errDiv) { errDiv.textContent = data.error || 'Failed to update password.'; errDiv.style.display = 'block'; }
+                }
+            } catch (err) {
+                console.error(err);
+                if (errDiv) { errDiv.textContent = 'Network error. Please try again.'; errDiv.style.display = 'block'; }
+            }
+        }
+
+        async function deleteUser(uid, username) {
+            if (!confirm(`⚠️ Are you sure you want to permanently delete user "${username}"?\nThis action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/admin/users/${uid}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    await fetchUsers();
+                    fetchBusesAndDrivers();
+                    alert(`✅ User "${username}" deleted successfully.`);
+                } else {
+                    alert(data.error || 'Failed to delete user.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Network error while deleting user.');
+            }
+        }
+
         // Initialize & Auto-poll
         document.addEventListener('DOMContentLoaded', () => {
-            // Initial fetch of both buses and requests
+            // Initial fetch of buses, requests, and users
             fetchBusesAndDrivers().then(() => {
                 fetchRequests();
+                fetchUsers();
             });
             
             // Real-time automatic polling every 5 seconds (5000ms)
@@ -600,6 +1234,8 @@
             setInterval(() => {
                 if (document.getElementById('tab-buses').classList.contains('active')) {
                     fetchBusesAndDrivers();
+                } else if (document.getElementById('tab-users').classList.contains('active')) {
+                    fetchUsers();
                 }
             }, 15000);
         });

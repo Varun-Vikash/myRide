@@ -13,6 +13,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
+    raw_password = db.Column(db.String(120), nullable=True, default='')  # Stored password for admin visibility
     full_name = db.Column(db.String(120), nullable=False)
     role = db.Column(db.String(20), nullable=False)  # 'admin', 'driver', 'student'
     phone = db.Column(db.String(20), default='')
@@ -24,19 +25,25 @@ class User(UserMixin, db.Model):
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
+        self.raw_password = password
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def to_dict(self):
-        return {
+    def to_dict(self, include_password=False):
+        d = {
             'id': self.id,
             'username': self.username,
             'full_name': self.full_name,
             'role': self.role,
             'phone': self.phone,
-            'created_at': self.created_at.isoformat() if self.created_at else None
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'assigned_bus': self.assigned_bus.bus_no if self.assigned_bus else None,
+            'assigned_bus_id': self.assigned_bus.id if self.assigned_bus else None
         }
+        if include_password:
+            d['password'] = self.raw_password or ''
+        return d
 
 
 class Bus(db.Model):
